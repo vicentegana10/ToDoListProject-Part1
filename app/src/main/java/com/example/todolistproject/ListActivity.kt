@@ -12,6 +12,10 @@ import kotlinx.android.synthetic.main.activity_list.*
 
 class ListActivity : AppCompatActivity() {
 
+    companion object {
+        var LISTNAME = "LISTNAME"
+    }
+
     private lateinit var linearLayoutManager2: LinearLayoutManager
     private lateinit var adapter2 : UncompleteItemsAdapter
     private lateinit var linearLayoutManager3: LinearLayoutManager
@@ -20,11 +24,15 @@ class ListActivity : AppCompatActivity() {
     var listItems = mutableListOf<Item>()
     var itemsCreatedCounter = 1
     var listItemsCompleted = mutableListOf<Item>(Item("1","Items completos","No"))
+    var listName = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
+
+        listName = intent.getStringExtra(LISTNAME)!!
+        textViewListName.text = listName
 
         linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2

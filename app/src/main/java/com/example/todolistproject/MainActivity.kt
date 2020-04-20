@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.todolistproject.ToDoListsActivity.Companion.USERNAME
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -31,9 +33,10 @@ class MainActivity : AppCompatActivity() {
         print("en Stop")
     }
 
-    fun onLoginButtonClick(v: View?) { //falta pasarle info a ToDoListsActivity
-        val myIntent = Intent(baseContext, ToDoListsActivity::class.java)
-        startActivity(myIntent)
+    fun onLoginButtonClick(view: View) { //falta pasarle info a ToDoListsActivity
+        val intent = Intent(view.context, ToDoListsActivity::class.java)
+        intent.putExtra(USERNAME,editTextMail.text.toString())
+        view.context.startActivity(intent)
     }
 
     fun onForgotPasswordButtonClick(v: View?){} // Para olvidé contraseña

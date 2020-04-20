@@ -1,10 +1,13 @@
 package com.example.todolistproject.adapters
 
+import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolistproject.ListActivity
 import com.example.todolistproject.R
 import com.example.todolistproject.classes.ToDoList
+import kotlinx.android.synthetic.main.recyclerview_list_row.*
 import kotlinx.android.synthetic.main.recyclerview_list_row.view.*
 
 
@@ -42,5 +45,6 @@ class ListsAdapter(private val list: ArrayList<ToDoList>) :
     }
 
 }
+
 
 

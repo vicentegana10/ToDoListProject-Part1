@@ -5,23 +5,35 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.todolistproject.ListActivity.Companion.LISTNAME
 import com.example.todolistproject.adapters.ListsAdapter
 import com.example.todolistproject.classes.ToDoList
+import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.activity_to_do_lists.*
+import kotlinx.android.synthetic.main.recyclerview_list_row.*
 
 
 class ToDoListsActivity : AppCompatActivity() {
+
+    companion object {
+        var USERNAME = "USERNAME"
+    }
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter : ListsAdapter
 
     var userToDoList = mutableListOf<ToDoList>()//Lista con las ToDoList del usuario
     var listsCreatedCounter = 1
+    var username = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_to_do_lists)
+
+        username = intent.getStringExtra(USERNAME)!!
+        textViewUsername.text = username
+
         linearLayoutManager = LinearLayoutManager(this)
         recyclerViewLists.layoutManager = linearLayoutManager
         adapter = ListsAdapter(userToDoList as ArrayList<ToDoList>)
@@ -60,8 +72,9 @@ class ToDoListsActivity : AppCompatActivity() {
     }
 
     fun onListButtonClick(view: View) { //falta pasarle info a ListActivity
-        val myIntent = Intent(baseContext, ListActivity::class.java)
-        startActivity(myIntent)
+        val intent2 = Intent(view.context, ListActivity::class.java)
+        intent2.putExtra(LISTNAME,buttonListNameRecyclerView.text.toString()) // se pasa el primer nombre no el del item apretado :/
+        view.context.startActivity(intent2)
     }
 
     fun onLogOutButtonClick(view: View) { //Por ahora esta bien asi
