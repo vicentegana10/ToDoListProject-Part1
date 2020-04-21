@@ -2,10 +2,13 @@ package com.example.todolistproject
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.todolistproject.ToDoListsActivity.Companion.USERNAME
+import com.example.todolistproject.ToDoListsActivity.Companion.USER
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,14 +37,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onLoginButtonClick(view: View) { //falta pasarle info a ToDoListsActivity
+        val user = User(editTextMail.text.toString(),editTextPassword.text.toString())
         val intent = Intent(view.context, ToDoListsActivity::class.java)
-        intent.putExtra(USERNAME,editTextMail.text.toString())
+        intent.putExtra(USER,user)
         view.context.startActivity(intent)
     }
 
     fun onForgotPasswordButtonClick(v: View?){} // Para olvidé contraseña
 
     fun onRegisterButtonClick(v: View?){} // Para registrarse
-
-
 }
+
+@Parcelize
+data class User(val email:String,val password:String):Parcelable
