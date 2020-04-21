@@ -1,32 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#3F51B5"
+    android:layout_marginTop="10dp"
     tools:ignore="MissingDefaultResource">
 
-    <Button
-        android:id="@+id/buttonListNameRecyclerView"
+    <TextView
+        android:id="@+id/textViewList"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="start"
-        android:onClick="onListButtonClick"
-        android:text="Nombre Lista"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/buttonEraseList"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="Borrar"
-        android:onClick="onEraseListButtonClick"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp"
+        android:text="Lista"
+        android:gravity="center"
+        android:textSize="20dp"
+        tools:layout_editor_absoluteX="3dp"
+        tools:layout_editor_absoluteY="16dp"
+        tools:ignore="MissingConstraints" />
+</LinearLayout>

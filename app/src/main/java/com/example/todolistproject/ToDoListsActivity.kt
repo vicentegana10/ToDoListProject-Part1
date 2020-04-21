@@ -2,42 +2,37 @@ package com.example.todolistproject
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todolistproject.ListActivity.Companion.LISTNAME
 import com.example.todolistproject.adapters.ListsAdapter
-import com.example.todolistproject.classes.ToDoList
-import kotlinx.android.synthetic.main.activity_list.*
+import com.example.todolistproject.adapters.OnItemClickListener
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_to_do_lists.*
 import kotlinx.android.synthetic.main.recyclerview_list_row.*
 
 
-class ToDoListsActivity : AppCompatActivity() {
+class ToDoListsActivity : AppCompatActivity(), OnItemClickListener {
 
     companion object {
-        var USERNAME = "USERNAME"
+        var USER = "USER"
     }
 
-    private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var adapter : ListsAdapter
-
-    var userToDoList = mutableListOf<ToDoList>()//Lista con las ToDoList del usuario
+    var userLog: User? = null
+    var userToDoList = ArrayList<List>()//Lista con las ToDoList del usuario
     var listsCreatedCounter = 1
-    var username = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_to_do_lists)
-
-        username = intent.getStringExtra(USERNAME)!!
-        textViewUsername.text = username
-
-        linearLayoutManager = LinearLayoutManager(this)
-        recyclerViewLists.layoutManager = linearLayoutManager
-        adapter = ListsAdapter(userToDoList as ArrayList<ToDoList>)
-        recyclerViewLists.adapter = adapter
+        var user:User = intent.getParcelableExtra(USER)
+        userLog = user
+        textViewUsername.text = user.email
+        recyclerViewLists.adapter = ListsAdapter(userToDoList,this)
+        recyclerViewLists.layoutManager = LinearLayoutManager(this)
     }
 
     override fun onPause() {
@@ -59,10 +54,10 @@ class ToDoListsActivity : AppCompatActivity() {
     }
 
     fun onAddListButtonClick(view: View){
-        var newToDoList = ToDoList("Lista  $listsCreatedCounter")
+        var newList = List("Lista  $listsCreatedCounter",listsCreatedCounter)
         listsCreatedCounter++
-        userToDoList.add(newToDoList)
-        adapter.notifyItemInserted(userToDoList.size )
+        userToDoList.add(newList)
+        recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
     }
 
     fun onEraseListButtonClick(view: View){
@@ -73,7 +68,7 @@ class ToDoListsActivity : AppCompatActivity() {
 
     fun onListButtonClick(view: View) { //falta pasarle info a ListActivity
         val intent2 = Intent(view.context, ListActivity::class.java)
-        intent2.putExtra(LISTNAME,buttonListNameRecyclerView.text.toString()) // se pasa el primer nombre no el del item apretado :/
+        intent2.putExtra(LISTNAME,textViewList.text.toString()) // se pasa el primer nombre no el del item apretado :/
         view.context.startActivity(intent2)
     }
 
@@ -82,5 +77,12 @@ class ToDoListsActivity : AppCompatActivity() {
         startActivity(myIntent)
     }
 
-
+    override fun onItemClicked(list: List) {
+        val intent2 = Intent(this, ListActivity::class.java)
+        intent2.putExtra(LISTNAME,textViewList.text) // se pasa el primer nombre no el del item apretado :/
+        startActivity(intent2)
+    }
 }
+
+@Parcelize
+data class List(val name: String,val position: Int):Parcelable
