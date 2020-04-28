@@ -24,15 +24,14 @@ class ListActivity : AppCompatActivity() {
     var listItems = mutableListOf<Item>()
     var itemsCreatedCounter = 1
     var listItemsCompleted = mutableListOf<Item>(Item("1","Items completos","No"))
-    var listName = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        listName = intent.getStringExtra(LISTNAME)!!
-        textViewListName.text = listName
+        var list: List = intent.getParcelableExtra(LISTNAME)!!
+        textViewListName.text = list.name
 
         linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2

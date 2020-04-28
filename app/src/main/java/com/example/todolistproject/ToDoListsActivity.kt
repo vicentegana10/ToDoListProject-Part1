@@ -1,8 +1,11 @@
 package com.example.todolistproject
 
+import Dialogs.DialogList
+import Dialogs.dialogListListener
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,9 +15,11 @@ import com.example.todolistproject.adapters.OnItemClickListener
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_to_do_lists.*
 import kotlinx.android.synthetic.main.recyclerview_list_row.*
+import org.w3c.dom.NameList
+import java.io.File
 
 
-class ToDoListsActivity : AppCompatActivity(), OnItemClickListener {
+class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListListener {
 
     companion object {
         var USER = "USER"
@@ -35,29 +40,13 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener {
         recyclerViewLists.layoutManager = LinearLayoutManager(this)
     }
 
-    override fun onPause() {
-        super.onPause();
-        // aca va lo que pasa cuando esta en pausa
-        print("en Pausa")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // aca va lo que pasa cuando esta en resume
-        print("en Resume")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        // aca va lo que pasa cuando esta en stop  ACA SE GUARDAN VALORES CLASE 6
-        print("en Stop")
-    }
-
     fun onAddListButtonClick(view: View){
-        var newList = List("Lista  $listsCreatedCounter",listsCreatedCounter)
+        /*var newList = List("Lista  $listsCreatedCounter",listsCreatedCounter)
         listsCreatedCounter++
-        userToDoList.add(newList)
-        recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
+        userToDoList.add(newList)*/
+        val dialogList = DialogList()
+        dialogList.show(supportFragmentManager, "dialogProduct")
+        Log.d("holaaa",userToDoList.toString())
     }
 
     fun onEraseListButtonClick(view: View){
@@ -79,8 +68,15 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener {
 
     override fun onItemClicked(list: List) {
         val intent2 = Intent(this, ListActivity::class.java)
-        intent2.putExtra(LISTNAME,textViewList.text) // se pasa el primer nombre no el del item apretado :/
+        intent2.putExtra(LISTNAME,list) // se pasa el primer nombre no el del item apretado :/
         startActivity(intent2)
+    }
+
+    override fun addList(nameList: String){
+        userToDoList.add(List(nameList,listsCreatedCounter))
+        listsCreatedCounter++
+        recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
+
     }
 }
 
