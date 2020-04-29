@@ -38,9 +38,12 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         textViewUsername.text = user.email
         recyclerViewLists.adapter = ListsAdapter(userToDoList,this)
         recyclerViewLists.layoutManager = LinearLayoutManager(this)
+        ButtonAddList.setOnClickListener(){
+            onAddListButtonClick()
+        }
     }
 
-    fun onAddListButtonClick(view: View){
+    fun onAddListButtonClick(){
         /*var newList = List("Lista  $listsCreatedCounter",listsCreatedCounter)
         listsCreatedCounter++
         userToDoList.add(newList)*/

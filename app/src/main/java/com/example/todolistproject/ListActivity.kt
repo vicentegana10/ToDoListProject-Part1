@@ -42,6 +42,10 @@ class ListActivity : AppCompatActivity() {
         recyclerViewCompleted.layoutManager = linearLayoutManager3
         adapter3 = CompleteItemsAdapter(listItemsCompleted as ArrayList<Item>)
         recyclerViewCompleted.adapter = adapter3
+
+        buttonBack.setOnClickListener(){
+            super.onBackPressed()
+        }
     }
 
     override fun onPause() {
