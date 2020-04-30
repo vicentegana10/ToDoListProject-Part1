@@ -7,49 +7,29 @@
     tools:context=".ListActivity">
 
 
-    <EditText
-        android:id="@+id/editTextListName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:inputType="textPersonName"
-        android:text="Nuevo Nombre"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toStartOf="@+id/buttonChangeListName"
-        tools:layout_editor_absoluteY="80dp" />
-
-    <Button
-        android:id="@+id/buttonChangeListName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:onClick="onChangeListNameButtonClick"
-        android:text="Cambiar nombre"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout3"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewUncompleted"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginVertical="12dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonShowComplete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonChangeListName" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+
+    <!--ARREGLAR TAMAÑO PORQUE AL LLENARSE USA TODA LA VIEW-->
 
     <Button
         android:id="@+id/buttonShowComplete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Mostrar Completados"
         android:onClick="onShowCompleteButtonClick"
+        android:text="Mostrar Completados"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutEditShareList"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerViewUncompleted" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
-    <!--ARREGLAR TAMAÑO PORQUE AL LLENARSE USA TODA LA VIEW-->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCompleted"
         android:layout_width="match_parent"
@@ -58,7 +38,8 @@
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonShowComplete" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonShowComplete"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutEditShareList"/>
 
     <LinearLayout
         android:id="@+id/linearLayoutEditShareList"

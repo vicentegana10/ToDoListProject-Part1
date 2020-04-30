@@ -10,7 +10,7 @@ import com.example.todolistproject.ToDoListsActivity
 import kotlinx.android.synthetic.main.recyclerview_list_row.view.*
 import java.text.FieldPosition
 
-class ListsAdapter(private var userlist: ArrayList<List>,val itemClickListener: ToDoListsActivity): RecyclerView.Adapter<ListsAdapter.ListViewHolder>() {
+class ListsAdapter(private var userlist: ArrayList<List>,val itemClickListener: ToDoListsActivity,val buttonClickListener: ToDoListsActivity): RecyclerView.Adapter<ListsAdapter.ListViewHolder>() {
 
     fun getList(position: Int): List{
         return userlist[position]
@@ -40,7 +40,7 @@ class ListsAdapter(private var userlist: ArrayList<List>,val itemClickListener: 
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val currentItem = userlist[position]
-        holder.bindContact(currentItem,itemClickListener)
+        holder.bindContact(currentItem,itemClickListener,buttonClickListener)
     }
 
     class ListViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener{
@@ -51,12 +51,15 @@ class ListsAdapter(private var userlist: ArrayList<List>,val itemClickListener: 
             view.setOnClickListener(this)
         }
 
-        fun bindContact(list: List,clickListener: OnItemClickListener){
+        fun bindContact(list: List,clickListener: OnItemClickListener,clickListener2: OnButtonClickListener){
             this.list = list
             view.textViewList.text = list.name
 
             itemView.setOnClickListener {
                 clickListener.onItemClicked(list)
+            }
+            view.renameListButton.setOnClickListener{
+                clickListener2.onButtonClicked(list) //list
             }
         }
 
@@ -68,4 +71,7 @@ class ListsAdapter(private var userlist: ArrayList<List>,val itemClickListener: 
 
 interface OnItemClickListener{
     fun onItemClicked(list: List)
+}
+interface OnButtonClickListener{
+    fun onButtonClicked(list: List) //
 }

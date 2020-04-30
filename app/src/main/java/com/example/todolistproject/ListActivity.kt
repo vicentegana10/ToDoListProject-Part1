@@ -3,6 +3,9 @@ package com.example.todolistproject
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.todolistproject.adapters.CompleteItemsAdapter
@@ -21,9 +24,9 @@ class ListActivity : AppCompatActivity() {
     private lateinit var linearLayoutManager3: LinearLayoutManager
     private lateinit var adapter3 : CompleteItemsAdapter
 
-    var listItems = mutableListOf<Item>()
+    var listItems = mutableListOf<Item>(Item("","Item 1 ejemplo","No"))
     var itemsCreatedCounter = 1
-    var listItemsCompleted = mutableListOf<Item>(Item("1","Items completos","No"))
+    var listItemsCompleted = mutableListOf<Item>(Item("","Items completado ejemplo","No"))
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,34 +70,27 @@ class ListActivity : AppCompatActivity() {
     }
 
     fun onAddItemToListButtonClick(view: View){
-        var newItem = Item("", "Item  $itemsCreatedCounter","No")
-        itemsCreatedCounter++
-        listItems.add(newItem)
-        adapter2.notifyItemInserted(listItems.size )
+        //var newItem = Item("", "Item  $itemsCreatedCounter","No")
+        //itemsCreatedCounter++
+        //listItems.add(newItem)
+        //adapter2.notifyItemInserted(listItems.size )
+        Toast.makeText(view.context,"No implementado aun", Toast.LENGTH_LONG).show()
     }
 
-    fun onItemNameButtonClick(view: View) { //falta pasarle info a ItemViewActivity
-        val myIntent = Intent(baseContext, ItemViewActivity::class.java)
-        startActivity(myIntent)
-    }
-
-    fun onChangeListNameButtonClick(view: View) { // que pueda cambiar el nombre de la lista actual
-        if (editTextListName.visibility==View.INVISIBLE){editTextListName.visibility=View.VISIBLE}
-        else{
-            editTextListName.visibility=View.INVISIBLE
-            // aca hacer que el nombre se cambie
-            textViewListName.text = editTextListName.text
-        }
-    }
-
-    fun onCheckBoxItemClick(view: View){} // Tiene que completar el item o descompletar
+    fun onCheckBoxItemClick(view: View){
+        Toast.makeText(view.context,"No implementado aun", Toast.LENGTH_LONG).show()
+        val checkBox : CheckBox = findViewById(view.id)
+        checkBox.isChecked = false
+    } // Tiene que completar el item o descompletar
 
     fun onShowCompleteButtonClick(view: View) { // Activa/desactiva visibilidad del 2do RecyclerView
         if (recyclerViewCompleted.visibility==View.VISIBLE){recyclerViewCompleted.visibility=View.INVISIBLE}
         else{ recyclerViewCompleted.visibility=View.VISIBLE}
     }
 
-    fun onShareListButtonClick(view: View){} // Tiene que compartir lista
+    fun onShareListButtonClick(view: View){
+        Toast.makeText(view.context,"No implementado aun",Toast.LENGTH_LONG).show()
+    } // Tiene que compartir lista
 
     fun onBackToListsButtonClick(view: View){ //falta pasarle info a ToDoListsActivity
         val myIntent = Intent(baseContext, ToDoListsActivity::class.java)

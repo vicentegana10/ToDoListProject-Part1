@@ -2,6 +2,7 @@ package com.example.todolistproject.adapters
 
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolistproject.R
 import com.example.todolistproject.classes.Item
@@ -32,12 +33,13 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>) :
         }
 
         override fun onClick(p0: View?) {
+            Toast.makeText(view.context,"No implementado aun", Toast.LENGTH_LONG).show()
             print("button clicked")
         }
 
         fun bindItemList(itemList: Item) {
             this.itemList = itemList
-            view.buttonItemName.text = itemList.name
+            view.textViewItemNameRV.text = itemList.name
             view.checkBoxItem.text = itemList.boolCheckBox
             view.imagePriority.text = itemList.boolPriority
         }
