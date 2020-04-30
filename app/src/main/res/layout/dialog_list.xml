@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#C8CAD5">
+    android:background="#6B7CDA">
 
     <LinearLayout
         android:id="@+id/linearLayout2"
