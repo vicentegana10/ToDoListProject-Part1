@@ -8,8 +8,29 @@ import com.example.todolistproject.List
 import com.example.todolistproject.R
 import com.example.todolistproject.ToDoListsActivity
 import kotlinx.android.synthetic.main.recyclerview_list_row.view.*
+import java.text.FieldPosition
 
 class ListsAdapter(private var userlist: ArrayList<List>,val itemClickListener: ToDoListsActivity): RecyclerView.Adapter<ListsAdapter.ListViewHolder>() {
+
+    fun getList(position: Int): List{
+        return userlist[position]
+    }
+
+    fun deleteList(position: Int){
+        userlist.removeAt(position)
+    }
+
+    fun restoreList(position: Int, list: List){
+        userlist.add(position,list)
+        notifyItemInserted(position)
+    }
+
+    fun changeListPosition(initialPosition: Int, finalPosition: Int){
+        val list = userlist[initialPosition]
+        userlist.removeAt(initialPosition)
+        userlist.add(finalPosition,list)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.recyclerview_list_row,parent,false)
         return ListViewHolder(itemView)
