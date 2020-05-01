@@ -29,16 +29,16 @@
         android:id="@+id/renameListButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
         android:layout_marginTop="4dp"
+        android:layout_marginRight="10dp"
         android:layout_marginBottom="4dp"
         android:backgroundTint="#6B7CDA"
         android:clickable="true"
         app:backgroundTint="#DADADA"
-        app:borderWidth="0.8dp"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_edit" />
+        app:srcCompat="@drawable/ic_edit_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

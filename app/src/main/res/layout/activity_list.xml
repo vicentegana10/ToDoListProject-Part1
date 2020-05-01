@@ -93,7 +93,7 @@
             android:id="@+id/textViewListName"
             android:layout_width="205dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="70dp"
             android:layout_weight="2"
             android:gravity="center_horizontal"

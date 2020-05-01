@@ -53,6 +53,11 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         ButtonAddList.setOnClickListener(){
             onAddListButtonClick()
         }
+
+        imageViewLogoUsername.setOnClickListener(){
+            LogOut()
+        }
+
         val itemTouchHelperCallBack = object : ItemTouchHelper.Callback()  {
             override fun getMovementFlags(
                 recyclerView: RecyclerView,
@@ -153,6 +158,11 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         updateList.name=nameList
         userToDoList.set(updateList.position,updateList)
         recyclerViewLists.adapter?.notifyItemChanged(updateList.position)
+    }
+
+    fun LogOut(){
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
 }

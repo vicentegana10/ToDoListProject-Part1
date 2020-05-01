@@ -38,7 +38,7 @@ class CompleteItemsAdapter(private val itemList: ArrayList<Item>) :
 
         fun bindItemList(itemList: Item) {
             this.itemList = itemList
-            view.textViewItemNameRV.text = itemList.name
+            view.textViewItemName.text = itemList.name
             view.checkBoxItem.text = itemList.boolCheckBox
             view.imagePriority.text = itemList.boolPriority
             view.checkBoxItem.isChecked = true
