@@ -2,6 +2,7 @@ package com.example.todolistproject
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
@@ -24,7 +25,7 @@ class ListActivity : AppCompatActivity() {
     private lateinit var linearLayoutManager3: LinearLayoutManager
     private lateinit var adapter3 : CompleteItemsAdapter
 
-    var listItems = mutableListOf<Item>(Item("","Item 1 ejemplo","No"))
+    var listItems = ArrayList<Item>()
     var itemsCreatedCounter = 1
     var listItemsCompleted = mutableListOf<Item>(Item("","Items completado ejemplo","No"))
 
@@ -35,6 +36,8 @@ class ListActivity : AppCompatActivity() {
 
         var list: List = intent.getParcelableExtra(LISTNAME)!!
         textViewListName.text = list.name
+        list.list_items = listItems
+        Log.d("lista",list.toString())
 
         linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2
@@ -70,11 +73,10 @@ class ListActivity : AppCompatActivity() {
     }
 
     fun onAddItemToListButtonClick(view: View){
-        //var newItem = Item("", "Item  $itemsCreatedCounter","No")
-        //itemsCreatedCounter++
-        //listItems.add(newItem)
-        //adapter2.notifyItemInserted(listItems.size )
-        Toast.makeText(view.context,"No implementado aun", Toast.LENGTH_LONG).show()
+        var newItem = Item("", "Item  $itemsCreatedCounter","No")
+        itemsCreatedCounter++
+        listItems.add(newItem)
+        adapter2.notifyItemInserted(listItems.size )
     }
 
     fun onCheckBoxItemClick(view: View){

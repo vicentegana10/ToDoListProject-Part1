@@ -7,18 +7,8 @@
     tools:context=".ListActivity">
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewUncompleted"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="12dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonShowComplete"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
-
     <!--ARREGLAR TAMAÑO PORQUE AL LLENARSE USA TODA LA VIEW-->
+
 
     <Button
         android:id="@+id/buttonShowComplete"
@@ -28,7 +18,8 @@
         android:text="Mostrar Completados"
         app:layout_constraintBottom_toTopOf="@+id/linearLayoutEditShareList"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        app:layout_constraintVertical_bias="0.646" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCompleted"
@@ -45,7 +36,6 @@
         android:id="@+id/linearLayoutEditShareList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
         android:weightSum="2"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -53,20 +43,21 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/buttonAddItemToList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/buttonEdit"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:onClick="onAddItemToListButtonClick"
-            android:text="Agregar  Item" />
+            android:background="@drawable/button"
+            android:onClick="onShareListButtonClick"
+            android:text="Editar" />
 
         <Button
-            android:id="@+id/buttonShareList"
-            android:layout_width="match_parent"
+            android:id="@+id/buttonShare"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="onShareListButtonClick"
-            android:text="Compartir" />
+            android:text="Compartir"
+            android:background="@drawable/button"/>
     </LinearLayout>
 
     <LinearLayout
@@ -99,6 +90,38 @@
             android:gravity="center_horizontal"
             android:text="Nombre Lista"
             android:textSize="20dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonAddItemToList"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/btn"
+        android:onClick="onAddItemToListButtonClick"
+        android:text=" + Añadir To Do"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+
+    <LinearLayout
+        android:layout_width="409dp"
+        android:layout_height="327dp"
+        android:layout_marginTop="1dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/buttonAddItemToList"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="1dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewUncompleted"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.571"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonAddItemToList" />
     </LinearLayout>
 
 

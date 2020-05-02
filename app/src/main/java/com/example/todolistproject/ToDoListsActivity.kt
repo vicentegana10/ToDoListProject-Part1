@@ -20,6 +20,7 @@ import com.example.todolistproject.ListActivity.Companion.LISTNAME
 import com.example.todolistproject.adapters.ListsAdapter
 import com.example.todolistproject.adapters.OnButtonClickListener
 import com.example.todolistproject.adapters.OnItemClickListener
+import com.example.todolistproject.classes.Item
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_to_do_lists.*
@@ -34,6 +35,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     var userLog: User? = null
     var userToDoList = ArrayList<List>()//Lista con las ToDoList del usuario
     var listsCreatedCounter = 0
+    var l:Array<List> ?= null
 
     lateinit var listLayout:ConstraintLayout
 
@@ -168,4 +170,4 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 }
 
 @Parcelize
-data class List(var name: String, var position: Int):Parcelable
+data class List(var name: String, var position: Int, var list_items: ArrayList<Item>? = null):Parcelable
