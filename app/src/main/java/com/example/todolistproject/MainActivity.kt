@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.todolistproject.ToDoListsActivity.Companion.USER
 import kotlinx.android.parcel.Parcelize
@@ -43,9 +44,13 @@ class MainActivity : AppCompatActivity() {
         view.context.startActivity(intent)
     }
 
-    fun onForgotPasswordButtonClick(v: View?){} // Para olvidé contraseña
+    fun onForgotPasswordButtonClick(v: View){
+        Toast.makeText(v.context,"No implementado aun", Toast.LENGTH_LONG).show()
+    } // Para olvidé contraseña
 
-    fun onRegisterButtonClick(v: View?){} // Para registrarse
+    fun onRegisterButtonClick(v: View){
+            Toast.makeText(v.context,"No implementado aun", Toast.LENGTH_LONG).show()
+    } // Para registrarse
 }
 
 @Parcelize

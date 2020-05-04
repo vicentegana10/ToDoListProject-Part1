@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:layout_marginTop="5dp"
-    android:background="#B0B3C6">
+    android:background="#6B7CDA">
 
     <CheckBox
         android:id="@+id/checkBoxItem"
@@ -24,6 +24,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="12dp"
         android:text="TextView"
+        android:textColor="#000000"
         android:textSize="15dp"
         app:layout_constraintStart_toEndOf="@+id/checkBoxItem"
         app:layout_constraintTop_toTopOf="parent"

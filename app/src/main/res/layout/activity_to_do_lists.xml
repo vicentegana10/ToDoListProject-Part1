@@ -15,7 +15,12 @@
         android:orientation="horizontal"
         tools:ignore="MissingConstraints">
 
-        <!--ARREGLAR TAMAÑO PORQUE AL LLENARSE USA TODA LA VIEW-->
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            app:srcCompat="@android:drawable/ic_menu_compass" />
 
         <ImageView
             android:id="@+id/imageViewLogoUsername"
@@ -40,6 +45,8 @@
             android:textSize="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
 
     </LinearLayout>
 

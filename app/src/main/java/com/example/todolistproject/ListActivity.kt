@@ -41,10 +41,13 @@ class ListActivity : AppCompatActivity() {
         adapter2 = UncompleteItemsAdapter(current_list!!.list_items as ArrayList<Item>)
         recyclerViewUncompleted.adapter = adapter2
 
+        /*
         linearLayoutManager3 = LinearLayoutManager(this)
         recyclerViewCompleted.layoutManager = linearLayoutManager3
         adapter3 = CompleteItemsAdapter(listItemsCompleted as ArrayList<Item>)
         recyclerViewCompleted.adapter = adapter3
+
+         */
 
         buttonBack.setOnClickListener(){
             val data = Intent().apply {
@@ -71,8 +74,10 @@ class ListActivity : AppCompatActivity() {
     } // Tiene que completar el item o descompletar
 
     fun onShowCompleteButtonClick(view: View) { // Activa/desactiva visibilidad del 2do RecyclerView
-        if (recyclerViewCompleted.visibility==View.VISIBLE){recyclerViewCompleted.visibility=View.INVISIBLE}
-        else{ recyclerViewCompleted.visibility=View.VISIBLE}
+        //if (recyclerViewCompleted.visibility==View.VISIBLE){recyclerViewCompleted.visibility=View.INVISIBLE}
+        //else{ recyclerViewCompleted.visibility=View.VISIBLE}
+        Toast.makeText(view.context,"No implementado aun",Toast.LENGTH_LONG).show()
+
     }
 
     fun onShareListButtonClick(view: View){

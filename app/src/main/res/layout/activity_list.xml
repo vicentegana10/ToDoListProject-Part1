@@ -9,28 +9,32 @@
 
     <!--ARREGLAR TAMAÑO PORQUE AL LLENARSE USA TODA LA VIEW-->
 
+    <!--Your comment
+        <Button
+            android:id="@+id/buttonShowComplete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onShowCompleteButtonClick"
+            android:text="Mostrar Completados"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayoutEditShareList"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+            app:layout_constraintVertical_bias="0.646" />
 
-    <Button
-        android:id="@+id/buttonShowComplete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="onShowCompleteButtonClick"
-        android:text="Mostrar Completados"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutEditShareList"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-        app:layout_constraintVertical_bias="0.646" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewCompleted"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonShowComplete"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutEditShareList"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewCompleted"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonShowComplete"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayoutEditShareList"/>
+
+        -->
 
     <LinearLayout
         android:id="@+id/linearLayoutEditShareList"
@@ -57,6 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Compartir"
+            android:onClick="onShareListButtonClick"
             android:background="@drawable/button"/>
     </LinearLayout>
 
@@ -67,9 +72,10 @@
         android:layout_gravity="center"
         android:background="#6B7CDA"
         android:orientation="horizontal"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="9dp"
-        tools:layout_editor_absoluteY="1dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
 
         <ImageView
             android:id="@+id/buttonBack"
@@ -102,16 +108,19 @@
         android:onClick="onAddItemToListButtonClick"
         android:text=" + Añadir To Do"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
 
     <LinearLayout
+        android:id="@+id/linearLayout5"
         android:layout_width="409dp"
         android:layout_height="327dp"
         android:layout_marginTop="1dp"
         android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonAddItemToList"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="1dp">
+        tools:ignore="MissingConstraints">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewUncompleted"
