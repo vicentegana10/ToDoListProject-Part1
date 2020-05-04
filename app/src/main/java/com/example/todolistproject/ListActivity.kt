@@ -1,5 +1,7 @@
 package com.example.todolistproject
-
+// Este es el manejo de la vista personaliza de cada lista, contiene un recyclerview para los items y botones que aun
+// no son necesarios y que muestran un Toast.
+// Su función para esta entrega es poder mostrar los items de cada lista y que al volver no se haya perdido el orden de las listas.
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle

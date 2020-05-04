@@ -1,5 +1,5 @@
 package com.example.todolistproject
-
+// Este es el manejo de la vista personaliza de cada item, no se usa para esta entrega.
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

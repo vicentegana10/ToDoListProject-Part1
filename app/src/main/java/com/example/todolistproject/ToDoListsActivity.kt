@@ -1,5 +1,10 @@
 package com.example.todolistproject
-
+// Manejo de la vista mas importante de la entrega, se crea la clase Lista y esta view tiene muchos usos.
+// Se pueden agregar listas gracias a un dialog apretando un boton flotante abajo a la derecha.
+// Estas listas se ven en un recyclerview y tienen un boton para editarles el nombre tambien mediante Dialog.
+// Se pueden eliminar listas gracias a onSwiped() y mover gracias a onMove(), funciones que avisan al adaptador del cambio
+// inmediatamente.   Tambien se puede ingresar a la view de cada lista apretando sobre una en especifico y al volver no se habrá
+// olvidado el orden.    Por ultimo para cerrar sesion hay un boton arriba al lado del nombre de usuario para volver al Login.
 
 import Dialogs.DialogList
 import Dialogs.DialogList2

@@ -1,5 +1,6 @@
 package com.example.todolistproject
-
+// Aca el manejo del login.   Es dummy pero recuerda el nombre del usuario y lo muestra despues.
+// Se crea la clase user.
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
