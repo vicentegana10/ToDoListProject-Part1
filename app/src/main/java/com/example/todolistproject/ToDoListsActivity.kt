@@ -5,18 +5,18 @@ import Dialogs.DialogList
 import Dialogs.DialogList2
 import Dialogs.dialogList2Listener
 import Dialogs.dialogListListener
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todolistproject.ListActivity.Companion.LISTNAME
+import com.example.todolistproject.ListActivity.Companion.LIST
 import com.example.todolistproject.adapters.ListsAdapter
 import com.example.todolistproject.adapters.OnButtonClickListener
 import com.example.todolistproject.adapters.OnItemClickListener
@@ -35,15 +35,13 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     var userLog: User? = null
     var userToDoList = ArrayList<List>()//Lista con las ToDoList del usuario
     var listsCreatedCounter = 0
-    var l:Array<List> ?= null
 
     lateinit var listLayout:ConstraintLayout
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_to_do_lists)
+        restoreContent(savedInstanceState)
         listLayout = activity_content_list
         var user:User = intent.getParcelableExtra(USER)
         userLog = user
@@ -128,15 +126,12 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     fun onAddListButtonClick(){
         val dialogList = DialogList()
         dialogList.show(supportFragmentManager, "dialogProduct")
-        Log.d("holaaa",userToDoList.toString())
     }
-
-
 
     override fun onItemClicked(list: List) {
         val intent2 = Intent(this, ListActivity::class.java)
-        intent2.putExtra(LISTNAME,list) // se pasa el primer nombre no el del item apretado :/
-        startActivity(intent2)
+        intent2.putExtra(LIST,userToDoList[list.position]) // se pasa el primer nombre no el del item apretado :/
+        startActivityForResult(intent2,1)
     }
 
     override fun onButtonClicked(list: List) {
@@ -145,11 +140,11 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         indexAsParameter.putInt("KEY1",list.position)
         dialogList.arguments = indexAsParameter
         dialogList.show(supportFragmentManager, "dialogProduct")
-        Log.d("holaaa",userToDoList.toString())
     }
 
     override fun addList(nameList: String){
-        userToDoList.add(List(nameList,listsCreatedCounter))
+        var list_items = ArrayList<Item>()
+        userToDoList.add(List(nameList,listsCreatedCounter,list_items))
         listsCreatedCounter++
         recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
 
@@ -167,7 +162,35 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         startActivity(intent)
     }
 
+    private fun restoreContent(savedInstanceState: Bundle?) {
+        if (savedInstanceState != null) {
+            userLog = savedInstanceState.getParcelable("user")
+            userToDoList = savedInstanceState.getParcelableArrayList<List>("UserList")!!
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable("user",userLog)
+        outState.putParcelableArrayList("UserList",userToDoList)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data != null) {
+                    data.apply {
+                        var updateList:List = data!!.getParcelableExtra(LIST)
+                        userToDoList[updateList.position] = updateList
+                    }
+                }
+
+            }
+        }
+    }
+
 }
 
 @Parcelize
-data class List(var name: String, var position: Int, var list_items: ArrayList<Item>? = null):Parcelable
+data class List(var name: String, var position: Int, var list_items: ArrayList<Item>):Parcelable

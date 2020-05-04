@@ -1,5 +1,6 @@
 package com.example.todolistproject
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,31 +18,27 @@ import kotlinx.android.synthetic.main.activity_list.*
 class ListActivity : AppCompatActivity() {
 
     companion object {
-        var LISTNAME = "LISTNAME"
+        var LIST = "LIST"
     }
 
     private lateinit var linearLayoutManager2: LinearLayoutManager
     private lateinit var adapter2 : UncompleteItemsAdapter
     private lateinit var linearLayoutManager3: LinearLayoutManager
     private lateinit var adapter3 : CompleteItemsAdapter
-
-    var listItems = ArrayList<Item>()
     var itemsCreatedCounter = 1
     var listItemsCompleted = mutableListOf<Item>(Item("","Items completado ejemplo","No"))
-
+    var current_list: List?= null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        var list: List = intent.getParcelableExtra(LISTNAME)!!
+        var list: List = intent.getParcelableExtra(LIST)!!
         textViewListName.text = list.name
-        list.list_items = listItems
-        Log.d("lista",list.toString())
-
+        current_list = list
         linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2
-        adapter2 = UncompleteItemsAdapter(listItems as ArrayList<Item>)
+        adapter2 = UncompleteItemsAdapter(current_list!!.list_items as ArrayList<Item>)
         recyclerViewUncompleted.adapter = adapter2
 
         linearLayoutManager3 = LinearLayoutManager(this)
@@ -50,33 +47,21 @@ class ListActivity : AppCompatActivity() {
         recyclerViewCompleted.adapter = adapter3
 
         buttonBack.setOnClickListener(){
+            val data = Intent().apply {
+                putExtra(LIST,current_list)
+            }
+            setResult(Activity.RESULT_OK,data)
+            finish()
             super.onBackPressed()
         }
     }
 
-    override fun onPause() {
-        super.onPause();
-        // aca va lo que pasa cuando esta en pausa
-        print("en Pausa")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // aca va lo que pasa cuando esta en resume
-        print("en Resume")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        // aca va lo que pasa cuando esta en stop  ACA SE GUARDAN VALORES CLASE 6
-        print("en Stop")
-    }
 
     fun onAddItemToListButtonClick(view: View){
         var newItem = Item("", "Item  $itemsCreatedCounter","No")
         itemsCreatedCounter++
-        listItems.add(newItem)
-        adapter2.notifyItemInserted(listItems.size )
+        current_list?.list_items!!.add(newItem)
+        adapter2.notifyItemInserted(current_list!!.list_items.size )
     }
 
     fun onCheckBoxItemClick(view: View){
