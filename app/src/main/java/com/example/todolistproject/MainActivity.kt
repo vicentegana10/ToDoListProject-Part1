@@ -20,25 +20,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
-    override fun onPause() {
-        super.onPause();
-        // aca va lo que pasa cuando esta en pausa
-        print("en Pausa")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // aca va lo que pasa cuando esta en resume
-        print("en Resume")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        // aca va lo que pasa cuando esta en stop  ACA SE GUARDAN VALORES CLASE 6
-        print("en Stop")
-    }
-
-    fun onLoginButtonClick(view: View) { //falta pasarle info a ToDoListsActivity
+    //Al apretar ingresar, lleva a la vista de lista
+    fun onLoginButtonClick(view: View) {
         val user = User(editTextMail.text.toString(),editTextPassword.text.toString())
         val intent = Intent(view.context, ToDoListsActivity::class.java)
         intent.putExtra(USER,user)

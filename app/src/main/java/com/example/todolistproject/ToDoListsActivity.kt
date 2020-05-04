@@ -37,9 +37,9 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         var USER = "USER"
     }
 
-    var userLog: User? = null
+    var userLog: User? = null//Usuario
     var userToDoList = ArrayList<List>()//Lista con las ToDoList del usuario
-    var listsCreatedCounter = 0
+    var listsCreatedCounter = 0//Contador de la cantidad de listas
 
     lateinit var listLayout:ConstraintLayout
 
@@ -55,14 +55,17 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         recyclerViewLists.adapter = ListsAdapter(userToDoList,this,this)
         recyclerViewLists.layoutManager = LinearLayoutManager(this)
 
+        //Se agrega un lista al apretar el boton
         ButtonAddList.setOnClickListener(){
             onAddListButtonClick()
         }
 
+        //Implemeta logOut haciendo click en el logo del usuario
         imageViewLogoUsername.setOnClickListener(){
             LogOut()
         }
 
+        //Se implemetó el drag and drop, cambia la listas de lugar, y se eleminan hacia el lado
         val itemTouchHelperCallBack = object : ItemTouchHelper.Callback()  {
             override fun getMovementFlags(
                 recyclerView: RecyclerView,
@@ -126,18 +129,21 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         itemTouchHelper.attachToRecyclerView(recyclerViewLists)
 
     }
-    
+
+    //Se abre el diagog para añadir la lista
     fun onAddListButtonClick(){
         val dialogList = DialogList()
         dialogList.show(supportFragmentManager, "dialogProduct")
     }
 
+    //Se abre el detalle de la lista
     override fun onItemClicked(list: List) {
         val intent2 = Intent(this, ListActivity::class.java)
         intent2.putExtra(LIST,userToDoList[list.position]) // se pasa el primer nombre no el del item apretado :/
         startActivityForResult(intent2,1)
     }
 
+    //Abre el dialog para cambiar el nombre de la lista
     override fun onButtonClicked(list: List) {
         val dialogList = DialogList2()
         val indexAsParameter = Bundle()
@@ -146,6 +152,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         dialogList.show(supportFragmentManager, "dialogProduct")
     }
 
+    //Se añade un lista a userToDoList
     override fun addList(nameList: String){
         var list_items = ArrayList<Item>()
         userToDoList.add(List(nameList,listsCreatedCounter,list_items))
@@ -153,6 +160,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
 
     }
+    //Cambia el nombre de la lista
     override fun changeName(nameList: String,indexRec : Int){
         Toast.makeText(applicationContext,"Se cambió el nombre a:  "+nameList,Toast.LENGTH_LONG).show()
         val updateList = userToDoList.get(indexRec)
@@ -160,12 +168,13 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         userToDoList.set(updateList.position,updateList)
         recyclerViewLists.adapter?.notifyItemChanged(updateList.position)
     }
-
+    //Funcion logOut que genera un intent hacia login
     fun LogOut(){
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 
+    //Restaura el contenido al girar la pantalla
     private fun restoreContent(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
             userLog = savedInstanceState.getParcelable("user")
@@ -173,12 +182,14 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         }
     }
 
+    //Guarda las variables para cuando se gire la pantalla
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putParcelable("user",userLog)
         outState.putParcelableArrayList("UserList",userToDoList)
     }
 
+    //Recibe una lista actualizada con todos los items añadidos en el detalle de cada lista
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1) {

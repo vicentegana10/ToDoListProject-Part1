@@ -27,9 +27,8 @@ class ListActivity : AppCompatActivity() {
     private lateinit var adapter2 : UncompleteItemsAdapter
     private lateinit var linearLayoutManager3: LinearLayoutManager
     private lateinit var adapter3 : CompleteItemsAdapter
-    var itemsCreatedCounter = 1
-    var listItemsCompleted = mutableListOf<Item>(Item("","Items completado ejemplo","No"))
-    var current_list: List?= null
+    var itemsCreatedCounter = 1 //Cantidad de Items
+    var current_list: List?= null//Lista que se esta mostrando
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,13 +49,13 @@ class ListActivity : AppCompatActivity() {
         recyclerViewCompleted.adapter = adapter3
 
          */
-
+        //Se devulve a la vista anterior
         buttonBack.setOnClickListener(){
            onBackPressed()
         }
     }
 
-
+    //Se agrega un item a la lista
     fun onAddItemToListButtonClick(view: View){
         var newItem = Item("", "Item  $itemsCreatedCounter","No")
         itemsCreatedCounter++
@@ -81,11 +80,7 @@ class ListActivity : AppCompatActivity() {
         Toast.makeText(view.context,"No implementado aun",Toast.LENGTH_LONG).show()
     } // Tiene que compartir lista
 
-    fun onBackToListsButtonClick(view: View){ //falta pasarle info a ToDoListsActivity
-        val myIntent = Intent(baseContext, ToDoListsActivity::class.java)
-        startActivity(myIntent)
-    }
-
+    //Devuelve la lista actualizada con todos los items dentro, se vuelve a la vista anterio
     override fun onBackPressed() {
         val data = Intent().apply {
             putExtra(LIST,current_list)

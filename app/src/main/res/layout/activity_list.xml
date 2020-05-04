@@ -60,9 +60,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Compartir"
+            android:background="@drawable/button"
             android:onClick="onShareListButtonClick"
-            android:background="@drawable/button"/>
+            android:text="Compartir" />
     </LinearLayout>
 
     <LinearLayout
@@ -113,19 +113,22 @@
 
     <LinearLayout
         android:id="@+id/linearLayout5"
-        android:layout_width="409dp"
-        android:layout_height="327dp"
-        android:layout_marginTop="1dp"
+        android:layout_width="match_parent"
+        android:layout_height="233dp"
+        android:layout_marginTop="47dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayoutEditShareList"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonAddItemToList"
+        app:layout_constraintTop_toTopOf="@+id/buttonAddItemToList"
+        app:layout_constraintVertical_bias="0.0"
         tools:ignore="MissingConstraints">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewUncompleted"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginVertical="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.571"
