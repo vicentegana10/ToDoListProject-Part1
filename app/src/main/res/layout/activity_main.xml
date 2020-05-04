@@ -27,21 +27,21 @@
         android:layout_width="276dp"
         android:layout_height="37dp"
         android:layout_gravity="center"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="70dp"
         android:background="@drawable/btn"
         android:onClick="onLoginButtonClick"
         android:text="Ingresar"
         app:layout_constraintBottom_toTopOf="@id/buttonForgotPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPassword"/>
+        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
 
     <Button
         android:id="@+id/buttonForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/btn_transparent"
         android:onClick="onForgotPasswordButtonClick"
         android:text="Olvidé mi contraseña"
@@ -56,7 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/btn_transparent"
         android:onClick="onRegisterButtonClick"
         android:text="Registrarme"

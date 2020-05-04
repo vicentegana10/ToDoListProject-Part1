@@ -50,12 +50,7 @@ class ListActivity : AppCompatActivity() {
          */
 
         buttonBack.setOnClickListener(){
-            val data = Intent().apply {
-                putExtra(LIST,current_list)
-            }
-            setResult(Activity.RESULT_OK,data)
-            finish()
-            super.onBackPressed()
+           onBackPressed()
         }
     }
 
@@ -87,5 +82,14 @@ class ListActivity : AppCompatActivity() {
     fun onBackToListsButtonClick(view: View){ //falta pasarle info a ToDoListsActivity
         val myIntent = Intent(baseContext, ToDoListsActivity::class.java)
         startActivity(myIntent)
+    }
+
+    override fun onBackPressed() {
+        val data = Intent().apply {
+            putExtra(LIST,current_list)
+        }
+        setResult(Activity.RESULT_OK,data)
+        finish()
+        super.onBackPressed()
     }
 }

@@ -121,8 +121,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         itemTouchHelper.attachToRecyclerView(recyclerViewLists)
 
     }
-
-
+    
     fun onAddListButtonClick(){
         val dialogList = DialogList()
         dialogList.show(supportFragmentManager, "dialogProduct")
