@@ -22,10 +22,20 @@ class MainActivity : AppCompatActivity() {
 
     //Al apretar ingresar, lleva a la vista de lista
     fun onLoginButtonClick(view: View) {
-        val user = User(editTextMail.text.toString(),editTextPassword.text.toString())
-        val intent = Intent(view.context, ToDoListsActivity::class.java)
-        intent.putExtra(USER,user)
-        view.context.startActivity(intent)
+        if (editTextMail.text.toString()!="") {
+            val intent = Intent(view.context, ToDoListsActivity::class.java)
+            val newUser: User = User(
+                "NombreDEFAULT",
+                "ApellidoDEFAULT",
+                editTextMail.text.toString(),
+                editTextPassword.text.toString(),
+                "PhoneDEFAULT",
+                "@drawable/ic_account_box_grey_96dp"
+            )
+            intent.putExtra(USER, newUser)
+            view.context.startActivity(intent)
+        }
+        else{Toast.makeText(view.context,"Campo Email vacío", Toast.LENGTH_LONG).show()}
     }
 
     fun onForgotPasswordButtonClick(v: View){
@@ -38,4 +48,4 @@ class MainActivity : AppCompatActivity() {
 }
 
 @Parcelize
-data class User(val email:String,val password:String):Parcelable
+data class User(var name: String, var lastName: String,var email: String,val password:String, var phone: String, var profilePic: String): Parcelable

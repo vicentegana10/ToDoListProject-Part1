@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ItemViewActivity"></activity>
+        <activity android:name=".MyProfileActivity"></activity>
+        <activity android:name=".AppMenuActivity" />
+        <activity android:name=".ItemViewActivity" />
         <activity android:name=".ListActivity" />
         <activity android:name=".ToDoListsActivity" />
         <activity android:name=".MainActivity">

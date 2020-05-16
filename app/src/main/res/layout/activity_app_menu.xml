@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AppMenuActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="#6B7CDA"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/buttonBackAppMenu"
+            android:layout_width="45dp"
+            android:layout_height="59dp"
+            android:layout_weight="0"
+            app:srcCompat="@drawable/ic_chevron_left_black_24dp">
+
+        </ImageView>
+
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/imageViewAccountBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayout4"
+        app:srcCompat="@drawable/ic_account_box_grey_96dp" />
+
+    <TextView
+        android:id="@+id/textViewUsernameInAppMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text=" Username In App Menu"
+        android:textSize="20sp"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="@+id/imageViewAccountBox"
+        app:layout_constraintStart_toStartOf="@+id/imageViewAccountBox"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewAccountBox" />
+
+    <TextView
+        android:id="@+id/textViewtextViewEmailInAppMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Email In App Menu"
+        android:textColor="#323232"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/textViewUsernameInAppMenu"
+        app:layout_constraintStart_toStartOf="@+id/textViewUsernameInAppMenu"
+        app:layout_constraintTop_toBottomOf="@+id/textViewUsernameInAppMenu" />
+
+    <TextView
+        android:id="@+id/textViewCuenta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="6dp"
+        android:textColor="#2C2A2A"
+        android:textSize="18sp"
+        android:text="Cuenta"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewtextViewEmailInAppMenu" />
+
+    <Button
+        android:id="@+id/ButtonGoToMyProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12sp"
+        android:text="Mi  Perfil"
+        app:layout_constraintStart_toStartOf="@+id/textViewCuenta"
+        app:layout_constraintTop_toBottomOf="@+id/textViewCuenta" />
+
+    <Button
+        android:id="@+id/ButtonLogOut"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6sp"
+        android:text="Cerrar  Sesión"
+        app:layout_constraintStart_toStartOf="@+id/ButtonGoToMyProfile"
+        app:layout_constraintTop_toBottomOf="@+id/ButtonGoToMyProfile" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

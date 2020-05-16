@@ -15,12 +15,14 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Parcelable
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolistproject.AppMenuActivity.Companion.USER
 import com.example.todolistproject.ListActivity.Companion.LIST
 import com.example.todolistproject.adapters.ListsAdapter
 import com.example.todolistproject.adapters.OnButtonClickListener
@@ -60,9 +62,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
             onAddListButtonClick()
         }
 
-        //Implemeta logOut haciendo click en el logo del usuario
-        imageViewLogoUsername.setOnClickListener(){
-            LogOut()
+        textViewUsername.setOnClickListener(){
+            onUsernameClicked(user)
         }
 
         //Se implemetó el drag and drop, cambia la listas de lugar, y se eleminan hacia el lado
@@ -141,6 +142,13 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         val intent2 = Intent(this, ListActivity::class.java)
         intent2.putExtra(LIST,userToDoList[list.position]) // se pasa el primer nombre no el del item apretado :/
         startActivityForResult(intent2,1)
+    }
+
+    //Se abre el menu aplicacion
+    fun onUsernameClicked(user: User){
+        val intent3 = Intent(this,AppMenuActivity::class.java)
+        intent3.putExtra(USER,user)
+        startActivityForResult(intent3,1)
     }
 
     //Abre el dialog para cambiar el nombre de la lista
