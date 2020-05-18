@@ -116,10 +116,23 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).deleteList(viewHolder.adapterPosition)
                 recyclerViewLists.adapter?.notifyItemRemoved(position)
                 val snackbar = Snackbar.make(listLayout,"Eliminaste una Lista",Snackbar.LENGTH_LONG)
-                snackbar.setAction("Deshacer",{
+                snackbar.setAction("Deshacer") {
                     ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).restoreList(position,list)
                     recyclerViewLists.adapter?.notifyItemInserted(position)
-                })
+                    // revertir lo hecho en modificar el atributo position de la lista
+                    var counter2 = viewHolder.adapterPosition
+                    while (counter2+1<userToDoList.size){
+
+                        var updateList2 = userToDoList[counter2+1]
+                        updateList2.position=counter2+1
+                        userToDoList.set(counter2+1, updateList2)
+                        recyclerViewLists.adapter?.notifyItemChanged(counter2+1)
+                        counter2++
+                    }
+                    listsCreatedCounter+=1
+
+
+                }
                 snackbar.setActionTextColor(Color.BLUE)
                 snackbar.show()
             }
