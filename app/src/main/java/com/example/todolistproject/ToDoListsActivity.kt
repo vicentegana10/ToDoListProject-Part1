@@ -92,8 +92,6 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
                 ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).changeListPosition(iniPosition,finPosition)
                 recyclerViewLists.adapter?.notifyItemMoved(iniPosition,finPosition)
-
-
                 return true
             }
 

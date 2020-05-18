@@ -4,6 +4,7 @@ package com.example.todolistproject
 // Su función para esta entrega es poder mostrar los items de cada lista y que al volver no se haya perdido el orden de las listas.
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,10 +12,14 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.todolistproject.adapters.CompleteItemsAdapter
 import com.example.todolistproject.adapters.UncompleteItemsAdapter
 import com.example.todolistproject.classes.Item
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_list.*
 
 class ListActivity : AppCompatActivity() {
@@ -29,10 +34,13 @@ class ListActivity : AppCompatActivity() {
     private lateinit var adapter3 : CompleteItemsAdapter
     var itemsCreatedCounter = 1 //Cantidad de Items
     var current_list: List?= null//Lista que se esta mostrando
+    lateinit var itemLayout: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
+
+        itemLayout = activity_content_items
 
         var list: List = intent.getParcelableExtra(LIST)!!
         textViewListName.text = list.name
@@ -53,6 +61,46 @@ class ListActivity : AppCompatActivity() {
         buttonBack.setOnClickListener(){
            onBackPressed()
         }
+
+        //Drag and drop items no completados
+        val itemTouchHelperCallback = object : ItemTouchHelper.Callback() {
+            override fun getMovementFlags(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                return makeMovementFlags(ItemTouchHelper.UP.or(ItemTouchHelper.DOWN),ItemTouchHelper.RIGHT)
+            }
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val iniPosition = viewHolder.adapterPosition
+                val finPosition = target.adapterPosition
+                adapter2.changeListPosition(iniPosition,finPosition)
+                adapter2.notifyItemMoved(iniPosition,finPosition)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val posicion = viewHolder.adapterPosition
+                val item = adapter2.getItem(posicion)
+                adapter2.deleteItem(posicion)
+                adapter2.notifyItemRemoved(posicion)
+                val snackbar = Snackbar.make(itemLayout,"Eliminaste un item",Snackbar.LENGTH_LONG)
+                snackbar.setAction("Deshacer",{
+                    adapter2.restoreItem(posicion,item)
+                    adapter2.notifyItemInserted(posicion)
+                })
+                snackbar.setActionTextColor(Color.BLUE)
+                snackbar.show()
+            }
+
+        }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(recyclerViewUncompleted)
     }
 
     //Se agrega un item a la lista
