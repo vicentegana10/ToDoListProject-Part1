@@ -16,13 +16,16 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolistproject.ItemViewActivity.Companion.ITEM
 import com.example.todolistproject.adapters.CompleteItemsAdapter
+import com.example.todolistproject.adapters.OnItemClickListener
+import com.example.todolistproject.adapters.OnUnCompleteItemClickListener
 import com.example.todolistproject.adapters.UncompleteItemsAdapter
 import com.example.todolistproject.classes.Item
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_list.*
 
-class ListActivity : AppCompatActivity() {
+class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
     companion object {
         var LIST = "LIST"
@@ -47,7 +50,7 @@ class ListActivity : AppCompatActivity() {
         current_list = list
         linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2
-        adapter2 = UncompleteItemsAdapter(current_list!!.list_items as ArrayList<Item>)
+        adapter2 = UncompleteItemsAdapter(current_list!!.list_items,this)
         recyclerViewUncompleted.adapter = adapter2
 
         /*
@@ -137,4 +140,12 @@ class ListActivity : AppCompatActivity() {
         finish()
         super.onBackPressed()
     }
+
+    override fun onItemClicked(item: Item) {
+        val intent = Intent(this, ItemViewActivity::class.java)
+        intent.putExtra(ITEM,item)
+        startActivityForResult(intent,1)
+    }
+
+
 }

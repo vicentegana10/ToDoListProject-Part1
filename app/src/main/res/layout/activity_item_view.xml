@@ -6,41 +6,56 @@
     android:layout_height="match_parent"
     tools:context=".ItemViewActivity">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/ButtonBackToListView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
+        android:layout_gravity="center"
+        android:background="#6B7CDA"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/abc_vector_test" />
+        tools:ignore="MissingConstraints">
 
-    <TextView
-        android:id="@+id/textViewItemNameTop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Nombre Item"
-        app:layout_constraintBottom_toBottomOf="@+id/ButtonBackToListView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ButtonBackToListView"
-        app:layout_constraintTop_toTopOf="@+id/ButtonBackToListView" />
+        <ImageView
+            android:id="@+id/buttonBackItem"
+            android:layout_width="45dp"
+            android:layout_height="59dp"
+            android:layout_weight="0"
+            app:srcCompat="@drawable/ic_chevron_left_black_24dp">
+
+        </ImageView>
+
+        <TextView
+            android:id="@+id/textViewItemName"
+            android:layout_width="341dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="70dp"
+            android:layout_weight="2"
+            android:gravity="center_horizontal"
+            android:text="Nombre Item"
+            android:textSize="20dp" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textViewCreatedDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="67dp"
         android:text="Creada el "
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.448"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewItemNameTop" />
+        app:layout_constraintTop_toTopOf="@+id/linearLayout3" />
 
     <TextView
         android:id="@+id/textViewDateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="40dp"
         android:text="Fecha Plazo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewCreatedDate" />
@@ -96,13 +111,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/buttonDeleteItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Eliminar" />
 
         <Button
             android:id="@+id/buttonCompleteItem"
