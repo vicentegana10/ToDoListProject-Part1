@@ -2,13 +2,12 @@ package com.example.todolistproject
 // Este es el manejo de la vista personaliza de cada lista, contiene un recyclerview para los items y botones que aun
 // no son necesarios y que muestran un Toast.
 // Su función para esta entrega es poder mostrar los items de cada lista y que al volver no se haya perdido el orden de las listas.
+
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,12 +17,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolistproject.ItemViewActivity.Companion.ITEM
 import com.example.todolistproject.adapters.CompleteItemsAdapter
-import com.example.todolistproject.adapters.OnItemClickListener
 import com.example.todolistproject.adapters.OnUnCompleteItemClickListener
 import com.example.todolistproject.adapters.UncompleteItemsAdapter
 import com.example.todolistproject.classes.Item
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_list.*
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
@@ -108,7 +109,9 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
     //Se agrega un item a la lista
     fun onAddItemToListButtonClick(view: View){
-        var newItem = Item("", "Item  $itemsCreatedCounter","No")
+        val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
+        val fechaDeCreacion: String = simpleDateFormat.format(Date())
+        var newItem = Item("", "Item  $itemsCreatedCounter","No",fechaDeCreacion,fechaDeCreacion)
         itemsCreatedCounter++
         current_list?.list_items!!.add(newItem)
         adapter2.notifyItemInserted(current_list!!.list_items.size )
