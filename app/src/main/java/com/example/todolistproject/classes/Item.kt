@@ -7,4 +7,4 @@ import java.text.SimpleDateFormat
 import java.time.DateTimeException
 
 @Parcelize
-class Item(val boolCheckBox : String, val name :String, val boolPriority : String, val fechaDeCreacion :String, val fechaPlazo: String):Parcelable
+class Item(val boolCheckBox : String, val name :String, val boolPriority :String, val fechaDeCreacion :String, val fechaPlazo: String, val nota :String):Parcelable

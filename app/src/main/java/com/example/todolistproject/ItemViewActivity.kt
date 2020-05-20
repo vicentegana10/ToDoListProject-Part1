@@ -30,6 +30,10 @@ class ItemViewActivity : AppCompatActivity() {
             EditDate()
         }
 
+        buttonBackItem.setOnClickListener(){
+            super.onBackPressed()
+        }
+
     }
 
     fun EditDate(){
