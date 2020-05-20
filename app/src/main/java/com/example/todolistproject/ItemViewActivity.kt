@@ -3,6 +3,7 @@ package com.example.todolistproject
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.todolistproject.classes.Item
 import kotlinx.android.synthetic.main.activity_item_view.*
@@ -25,6 +26,26 @@ class ItemViewActivity : AppCompatActivity() {
         textViewItemName.text = item.name
         textViewCreatedDate.text = "Creado el " + item.fechaDeCreacion
         textViewDate.text = item.fechaPlazo
+        if (item.boolPriority=="Si"){
+            imageViewStarOn.visibility = View.VISIBLE
+            imageViewStarOff.visibility = View.INVISIBLE
+        }
+        else{
+            imageViewStarOn.visibility = View.INVISIBLE
+            imageViewStarOff.visibility = View.VISIBLE
+        }
+
+        imageViewStarOn.setOnClickListener(){
+            item.boolPriority="No"
+            imageViewStarOn.visibility = View.INVISIBLE
+            imageViewStarOff.visibility = View.VISIBLE
+        }
+
+        imageViewStarOff.setOnClickListener(){
+            item.boolPriority="Si"
+            imageViewStarOn.visibility = View.VISIBLE
+            imageViewStarOff.visibility = View.INVISIBLE
+        }
 
         imageViewCalendar.setOnClickListener(){
             EditDate()
@@ -32,6 +53,14 @@ class ItemViewActivity : AppCompatActivity() {
 
         buttonBackItem.setOnClickListener(){
             super.onBackPressed()
+        }
+        buttonCompleteItem.setOnClickListener(){
+            if (item.boolCompleted=="No"){
+                item.boolCompleted=="Si"
+            }
+            else if (item.boolCompleted=="Si"){
+                item.boolCompleted=="No"
+            }
         }
 
     }

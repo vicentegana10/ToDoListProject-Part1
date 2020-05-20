@@ -53,6 +53,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         recyclerViewUncompleted.layoutManager = linearLayoutManager2
         adapter2 = UncompleteItemsAdapter(current_list!!.list_items,this)
         recyclerViewUncompleted.adapter = adapter2
+        itemsCreatedCounter=list.list_items.size+1
 
         /*
         linearLayoutManager3 = LinearLayoutManager(this)
@@ -111,17 +112,15 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     fun onAddItemToListButtonClick(view: View){
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val fechaDeCreacion: String = simpleDateFormat.format(Date())
-        var newItem = Item("", "Item  $itemsCreatedCounter","No",fechaDeCreacion,fechaDeCreacion)
+        var newItem = Item("No", "Item  $itemsCreatedCounter","No",fechaDeCreacion,fechaDeCreacion,"")
         itemsCreatedCounter++
         current_list?.list_items!!.add(newItem)
         adapter2.notifyItemInserted(current_list!!.list_items.size )
     }
 
-    fun onCheckBoxItemClick(view: View){
-        Toast.makeText(view.context,"No implementado aun", Toast.LENGTH_LONG).show()
-        val checkBox : CheckBox = findViewById(view.id)
-        checkBox.isChecked = false
-    } // Tiene que completar el item o descompletar
+    fun onDoneItemClick(view: View){
+        Toast.makeText(view.context,"No implementado aun,MARCAR COMO COMPLETADO", Toast.LENGTH_LONG).show()
+    }
 
     fun onShowCompleteButtonClick(view: View) { // Activa/desactiva visibilidad del 2do RecyclerView
         //if (recyclerViewCompleted.visibility==View.VISIBLE){recyclerViewCompleted.visibility=View.INVISIBLE}

@@ -50,12 +50,21 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClick
         fun bindItemList(itemList: Item,clickListener: OnUnCompleteItemClickListener) {
             this.itemList = itemList
             view.textViewItemName.text = itemList.name
-            view.checkBoxItem.text = itemList.boolCheckBox
-            view.imagePriority.text = itemList.boolPriority
+            if (itemList.boolPriority=="No"){
+                view.imageViewStar.setVisibility(View.INVISIBLE)
+            }
+            else{view.imageViewStar.setVisibility(View.VISIBLE)}
 
             view.setOnClickListener{
                 clickListener.onItemClicked(itemList)
             }
+            view.imageViewItemDone.setOnClickListener(){
+                Toast.makeText(view.context,"MARCAR "+itemList.name+ " COMO COMPLETADO", Toast.LENGTH_LONG).show()
+            }
+            view.renameItemButton.setOnClickListener(){
+                Toast.makeText(view.context,"Desplegar dialog para cambiar nombre de "+itemList.name, Toast.LENGTH_LONG).show()
+            }
+
         }
     }
 

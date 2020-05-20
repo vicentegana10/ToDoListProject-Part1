@@ -6,37 +6,54 @@
     android:layout_marginTop="5dp"
     android:background="#6B7CDA">
 
-    <CheckBox
-        android:id="@+id/checkBoxItem"
+    <ImageView
+        android:id="@+id/imageViewItemDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-
-        android:layout_marginTop="8dp"
-        android:onClick="onCheckBoxItemClick"
+        android:layout_marginStart="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewItemName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/textViewItemName"
+        app:srcCompat="@drawable/ic_done_black_24dp" />
 
     <TextView
         android:id="@+id/textViewItemName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="30dp"
         android:text="TextView"
         android:textColor="#000000"
         android:textSize="15dp"
-        app:layout_constraintStart_toEndOf="@+id/checkBoxItem"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageViewItemDone"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
-    <TextView
-        android:id="@+id/imagePriority"
+    <ImageView
+        android:id="@+id/imageViewStar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No"
+        android:layout_marginEnd="3dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewItemName"
+        app:layout_constraintEnd_toStartOf="@+id/textViewItemName"
+        app:layout_constraintTop_toTopOf="@+id/textViewItemName"
+        app:srcCompat="@drawable/ic_star_yellow_24dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/renameItemButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="4dp"
+        android:backgroundTint="#6B7CDA"
+        android:clickable="true"
+        app:backgroundTint="#DADADA"
+        app:borderWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_edit_black_24dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
