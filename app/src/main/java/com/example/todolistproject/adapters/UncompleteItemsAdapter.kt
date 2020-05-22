@@ -50,7 +50,7 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClick
         fun bindItemList(itemList: Item,clickListener: OnUnCompleteItemClickListener) {
             this.itemList = itemList
             view.textViewItemName.text = itemList.name
-            if (itemList.boolPriority=="No"){
+            if (itemList.boolPriority==false){
                 view.imageViewStar.setVisibility(View.INVISIBLE)
             }
             else{view.imageViewStar.setVisibility(View.VISIBLE)}
@@ -59,7 +59,7 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClick
                 clickListener.onItemClicked(itemList)
             }
             view.imageViewItemDone.setOnClickListener(){
-                Toast.makeText(view.context,"MARCAR "+itemList.name+ " COMO COMPLETADO", Toast.LENGTH_LONG).show()
+                clickListener.changeStateItem(itemList,adapterPosition)
             }
             view.renameItemButton.setOnClickListener(){
                 Toast.makeText(view.context,"Desplegar dialog para cambiar nombre de "+itemList.name, Toast.LENGTH_LONG).show()
@@ -72,4 +72,5 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClick
 
 interface OnUnCompleteItemClickListener{
     fun onItemClicked(item: Item)
+    fun changeStateItem(item: Item, position: Int)
 }

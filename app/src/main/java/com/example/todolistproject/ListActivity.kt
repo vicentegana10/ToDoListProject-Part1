@@ -35,36 +35,45 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     private lateinit var linearLayoutManager2: LinearLayoutManager
     private lateinit var adapter2 : UncompleteItemsAdapter
     private lateinit var linearLayoutManager3: LinearLayoutManager
-    private lateinit var adapter3 : CompleteItemsAdapter
+    private lateinit var adapter3 : UncompleteItemsAdapter
     var itemsCreatedCounter = 1 //Cantidad de Items
     var current_list: List?= null//Lista que se esta mostrando
     lateinit var itemLayout: ConstraintLayout
+    var expand:Boolean = false
+    private var completeItems = ArrayList<Item>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
         itemLayout = activity_content_items
-
+        //Lista que llega de la activity anterior ------
         var list: List = intent.getParcelableExtra(LIST)!!
         textViewListName.text = list.name
         current_list = list
+        //------------------------------------------------
+
+        //Recycler View UnCompletedItems
         linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2
-        adapter2 = UncompleteItemsAdapter(current_list!!.list_items,this)
+        adapter2 = UncompleteItemsAdapter(current_list!!.list_items_uncompleted,this)
         recyclerViewUncompleted.adapter = adapter2
-        itemsCreatedCounter=list.list_items.size+1
+        itemsCreatedCounter=list.list_items_uncompleted.size+1
 
-        /*
+        //Recycler View CompletedItems
         linearLayoutManager3 = LinearLayoutManager(this)
         recyclerViewCompleted.layoutManager = linearLayoutManager3
-        adapter3 = CompleteItemsAdapter(listItemsCompleted as ArrayList<Item>)
+        adapter3 = UncompleteItemsAdapter(current_list!!.list_items_completed,this)
         recyclerViewCompleted.adapter = adapter3
 
-         */
+
         //Se devulve a la vista anterior
         buttonBack.setOnClickListener(){
            onBackPressed()
+        }
+
+        textViewShowCompleted.setOnClickListener(){
+            expandRecyclerView()
         }
 
         //Drag and drop items no completados
@@ -112,10 +121,10 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     fun onAddItemToListButtonClick(view: View){
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val fechaDeCreacion: String = simpleDateFormat.format(Date())
-        var newItem = Item("No", "Item  $itemsCreatedCounter","No",fechaDeCreacion,fechaDeCreacion,"")
+        var newItem = Item(false, "Item  $itemsCreatedCounter",false,fechaDeCreacion,fechaDeCreacion,"")
         itemsCreatedCounter++
-        current_list?.list_items!!.add(newItem)
-        adapter2.notifyItemInserted(current_list!!.list_items.size )
+        current_list?.list_items_uncompleted!!.add(newItem)
+        adapter2.notifyItemInserted(current_list!!.list_items_uncompleted.size )
     }
 
     fun onDoneItemClick(view: View){
@@ -143,10 +152,40 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         super.onBackPressed()
     }
 
+    fun expandRecyclerView(){
+
+        if(expand){
+            textViewShowCompleted.text = "Mostrar completados"
+            LinearCompleted.visibility = View.GONE
+        }
+        else{
+            LinearCompleted.visibility = View.VISIBLE
+            textViewShowCompleted.text = "Ocultar completados"
+        }
+        expand = !expand
+    }
+
     override fun onItemClicked(item: Item) {
         val intent = Intent(this, ItemViewActivity::class.java)
         intent.putExtra(ITEM,item)
         startActivityForResult(intent,1)
+    }
+
+    override fun changeStateItem(item: Item, position: Int) {
+        if(item.boolCompleted){
+            item.boolCompleted = false
+            adapter3.deleteItem(position)
+            adapter3.notifyItemRemoved(position)
+            current_list?.list_items_uncompleted!!.add(item)
+            adapter2.notifyItemInserted(current_list?.list_items_uncompleted!!.size)
+        }
+        else{
+            item.boolCompleted = true
+            adapter2.deleteItem(position)
+            adapter2.notifyItemRemoved(position)
+            current_list?.list_items_completed!!.add(item)
+            adapter3.notifyItemInserted(current_list?.list_items_completed!!.size)
+        }
     }
 
 

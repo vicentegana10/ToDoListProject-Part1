@@ -173,8 +173,9 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
     //Se añade un lista a userToDoList
     override fun addList(nameList: String){
-        var list_items = ArrayList<Item>()
-        userToDoList.add(List(nameList,listsCreatedCounter,list_items))
+        var list_items_uncompleted = ArrayList<Item>()
+        var list_items_completed = ArrayList<Item>()
+        userToDoList.add(List(nameList,listsCreatedCounter,list_items_uncompleted,list_items_completed))
         listsCreatedCounter++
         recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
 
@@ -227,4 +228,4 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 }
 
 @Parcelize
-data class List(var name: String, var position: Int, var list_items: ArrayList<Item>):Parcelable
+data class List(var name: String, var position: Int, var list_items_uncompleted: ArrayList<Item>, var list_items_completed: ArrayList<Item>):Parcelable

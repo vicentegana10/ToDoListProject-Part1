@@ -26,7 +26,7 @@ class ItemViewActivity : AppCompatActivity() {
         textViewItemName.text = item.name
         textViewCreatedDate.text = "Creado el " + item.fechaDeCreacion
         textViewDate.text = item.fechaPlazo
-        if (item.boolPriority=="Si"){
+        if (item.boolPriority==true){
             imageViewStarOn.visibility = View.VISIBLE
             imageViewStarOff.visibility = View.INVISIBLE
         }
@@ -36,13 +36,13 @@ class ItemViewActivity : AppCompatActivity() {
         }
 
         imageViewStarOn.setOnClickListener(){
-            item.boolPriority="No"
+            item.boolPriority=false
             imageViewStarOn.visibility = View.INVISIBLE
             imageViewStarOff.visibility = View.VISIBLE
         }
 
         imageViewStarOff.setOnClickListener(){
-            item.boolPriority="Si"
+            item.boolPriority=true
             imageViewStarOn.visibility = View.VISIBLE
             imageViewStarOff.visibility = View.INVISIBLE
         }
@@ -55,11 +55,11 @@ class ItemViewActivity : AppCompatActivity() {
             super.onBackPressed()
         }
         buttonCompleteItem.setOnClickListener(){
-            if (item.boolCompleted=="No"){
-                item.boolCompleted=="Si"
+            if (item.boolCompleted==false){
+                item.boolCompleted==true
             }
-            else if (item.boolCompleted=="Si"){
-                item.boolCompleted=="No"
+            else if (item.boolCompleted==true){
+                item.boolCompleted==false
             }
         }
 

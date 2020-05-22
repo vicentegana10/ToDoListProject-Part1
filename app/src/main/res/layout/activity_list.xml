@@ -2,10 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_content_items"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ListActivity"
-    android:id="@+id/activity_content_items">
+    tools:context=".ListActivity">
 
 
     <!--ARREGLAR TAMAÑO PORQUE AL LLENARSE USA TODA LA VIEW-->
@@ -129,12 +129,38 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewUncompleted"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginVertical="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.571"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buttonAddItemToList" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewShowCompleted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Mostrar completados"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
+
+    <LinearLayout
+        android:id="@+id/LinearCompleted"
+        android:layout_width="418dp"
+        android:layout_height="159dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutEditShareList"
+        app:layout_constraintTop_toBottomOf="@+id/textViewShowCompleted"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewCompleted"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 
