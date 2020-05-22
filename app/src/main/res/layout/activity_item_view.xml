@@ -20,7 +20,7 @@
 
         <ImageView
             android:id="@+id/buttonBackItem"
-            android:layout_width="45dp"
+            android:layout_width="42dp"
             android:layout_height="59dp"
             android:layout_weight="0"
             app:srcCompat="@drawable/ic_chevron_left_black_24dp">

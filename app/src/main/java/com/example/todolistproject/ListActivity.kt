@@ -131,16 +131,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         adapter2.notifyItemInserted(current_list!!.list_items_uncompleted.size )
     }
 
-    fun onDoneItemClick(view: View){
-        Toast.makeText(view.context,"No implementado aun,MARCAR COMO COMPLETADO", Toast.LENGTH_LONG).show()
-    }
-
-    fun onShowCompleteButtonClick(view: View) { // Activa/desactiva visibilidad del 2do RecyclerView
-        //if (recyclerViewCompleted.visibility==View.VISIBLE){recyclerViewCompleted.visibility=View.INVISIBLE}
-        //else{ recyclerViewCompleted.visibility=View.VISIBLE}
-        Toast.makeText(view.context,"No implementado aun",Toast.LENGTH_LONG).show()
-
-    }
 
     fun onShareListButtonClick(view: View){
         Toast.makeText(view.context,"No implementado aun",Toast.LENGTH_LONG).show()
@@ -200,7 +190,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         }
     }
 
-    //Recibe una lista actualizada con todos los items añadidos en el detalle de cada lista
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 2) {

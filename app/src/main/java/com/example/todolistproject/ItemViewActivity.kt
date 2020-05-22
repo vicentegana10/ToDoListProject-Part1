@@ -37,7 +37,7 @@ class ItemViewActivity : AppCompatActivity() {
         textViewCreatedDate.text = "Creado el " + item?.fechaDeCreacion
         textViewDate.text = item?.fechaPlazo
         edit = item?.boolPriority
-        Log.d("Prioridad",item?.boolPriority.toString())
+
         if(edit!!){
             imageViewStar.setImageResource(R.drawable.ic_star_yellow_24dp)
         }
@@ -52,10 +52,6 @@ class ItemViewActivity : AppCompatActivity() {
 
         imageViewStar.setOnClickListener(){
             EditPriority()
-        }
-
-        buttonBackItem.setOnClickListener(){
-            super.onBackPressed()
         }
 
     }
