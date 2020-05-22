@@ -7,6 +7,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.Toast
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolistproject.ItemViewActivity.Companion.ITEM
+import com.example.todolistproject.ItemViewActivity.Companion.POS
 import com.example.todolistproject.adapters.CompleteItemsAdapter
 import com.example.todolistproject.adapters.OnUnCompleteItemClickListener
 import com.example.todolistproject.adapters.UncompleteItemsAdapter
@@ -40,7 +42,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     var current_list: List?= null//Lista que se esta mostrando
     lateinit var itemLayout: ConstraintLayout
     var expand:Boolean = false
-    private var completeItems = ArrayList<Item>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -167,10 +169,18 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         expand = !expand
     }
 
-    override fun onItemClicked(item: Item) {
+    override fun onItemClicked(item: Item,position: Int) {
         val intent = Intent(this, ItemViewActivity::class.java)
-        intent.putExtra(ITEM,item)
-        startActivityForResult(intent,1)
+        if(item.boolCompleted){
+            intent.putExtra(ITEM,current_list!!.list_items_completed[position])
+            intent.putExtra(POS,position.toString())
+            startActivityForResult(intent,2)
+        }
+        else{
+            intent.putExtra(ITEM,current_list!!.list_items_uncompleted[position])
+            intent.putExtra(POS,position.toString())
+            startActivityForResult(intent,2)
+        }
     }
 
     override fun changeStateItem(item: Item, position: Int) {
@@ -187,6 +197,28 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             adapter2.notifyItemRemoved(position)
             current_list?.list_items_completed!!.add(item)
             adapter3.notifyItemInserted(current_list?.list_items_completed!!.size)
+        }
+    }
+
+    //Recibe una lista actualizada con todos los items añadidos en el detalle de cada lista
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 2) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data != null) {
+                    data.apply {
+                        var updateItem:Item = data!!.getParcelableExtra(ITEM)
+                        var position: String = data!!.getStringExtra(POS)
+                        if(updateItem.boolCompleted){
+                            current_list!!.list_items_completed[position.toInt()] = updateItem
+                        }
+                        else{
+                            current_list!!.list_items_uncompleted[position.toInt()] = updateItem
+                        }
+                    }
+                }
+
+            }
         }
     }
 

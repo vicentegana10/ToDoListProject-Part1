@@ -55,8 +55,12 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClick
             }
             else{view.imageViewStar.setVisibility(View.VISIBLE)}
 
+            if(itemList.boolCompleted){
+                view.imageViewItemDone.setImageResource(R.drawable.ic_done_green_24dp)
+            }
+
             view.setOnClickListener{
-                clickListener.onItemClicked(itemList)
+                clickListener.onItemClicked(itemList,adapterPosition)
             }
             view.imageViewItemDone.setOnClickListener(){
                 clickListener.changeStateItem(itemList,adapterPosition)
@@ -71,6 +75,6 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClick
 }
 
 interface OnUnCompleteItemClickListener{
-    fun onItemClicked(item: Item)
+    fun onItemClicked(item: Item, position: Int)
     fun changeStateItem(item: Item, position: Int)
 }

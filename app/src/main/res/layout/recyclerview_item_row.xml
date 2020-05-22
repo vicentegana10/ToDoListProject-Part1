@@ -33,10 +33,10 @@
         android:id="@+id/imageViewStar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="3dp"
+        android:layout_marginStart="16dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/textViewItemName"
-        app:layout_constraintEnd_toStartOf="@+id/textViewItemName"
+        app:layout_constraintStart_toEndOf="@+id/textViewItemName"
         app:layout_constraintTop_toTopOf="@+id/textViewItemName"
         app:srcCompat="@drawable/ic_star_yellow_24dp" />
 
