@@ -3,6 +3,7 @@ package com.example.todolistproject
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.todolistproject.classes.Item
@@ -17,50 +18,29 @@ class ItemViewActivity : AppCompatActivity() {
         var ITEM = "ITEM"
     }
 
+    var item: Item ?= null
+    var edit: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_item_view)
 
-        var item: Item = intent.getParcelableExtra(ITEM)!!
+        item = intent.getParcelableExtra(ITEM)!!
 
-        textViewItemName.text = item.name
-        textViewCreatedDate.text = "Creado el " + item.fechaDeCreacion
-        textViewDate.text = item.fechaPlazo
-        if (item.boolPriority==true){
-            imageViewStarOn.visibility = View.VISIBLE
-            imageViewStarOff.visibility = View.INVISIBLE
-        }
-        else{
-            imageViewStarOn.visibility = View.INVISIBLE
-            imageViewStarOff.visibility = View.VISIBLE
-        }
-
-        imageViewStarOn.setOnClickListener(){
-            item.boolPriority=false
-            imageViewStarOn.visibility = View.INVISIBLE
-            imageViewStarOff.visibility = View.VISIBLE
-        }
-
-        imageViewStarOff.setOnClickListener(){
-            item.boolPriority=true
-            imageViewStarOn.visibility = View.VISIBLE
-            imageViewStarOff.visibility = View.INVISIBLE
-        }
+        textViewItemName.text = item?.name
+        textViewCreatedDate.text = "Creado el " + item?.fechaDeCreacion
+        textViewDate.text = item?.fechaPlazo
 
         imageViewCalendar.setOnClickListener(){
             EditDate()
         }
 
+        imageViewStar.setOnClickListener(){
+            EditPriority()
+        }
+
         buttonBackItem.setOnClickListener(){
             super.onBackPressed()
-        }
-        buttonCompleteItem.setOnClickListener(){
-            if (item.boolCompleted==false){
-                item.boolCompleted==true
-            }
-            else if (item.boolCompleted==true){
-                item.boolCompleted==false
-            }
         }
 
     }
@@ -76,6 +56,7 @@ class ItemViewActivity : AppCompatActivity() {
             val myFormat = "dd-MM-yyyy"
             val sdf = SimpleDateFormat(myFormat, Locale.US)
             textViewDate.text = sdf.format(cal.time)
+            item?.fechaPlazo = sdf.format(cal.time)
         }
 
         DatePickerDialog(this, dateSetListener,
@@ -83,5 +64,15 @@ class ItemViewActivity : AppCompatActivity() {
             cal.get(Calendar.MONTH),
             cal.get(Calendar.DAY_OF_MONTH)).show()
     }
-    
+
+    fun EditPriority() {
+        if (edit) {
+            imageViewStar.setImageResource(R.drawable.ic_star_border_black_24dp)
+            item?.boolPriority = false
+        } else {
+            imageViewStar.setImageResource(R.drawable.ic_star_yellow_24dp)
+            item?.boolPriority = true
+        }
+        edit = !edit
+    }
 }

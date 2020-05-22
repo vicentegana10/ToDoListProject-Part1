@@ -47,25 +47,27 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         setContentView(R.layout.activity_list)
 
         itemLayout = activity_content_items
-        //Lista que llega de la activity anterior ------
+
+        //Lista que llega de la activity anterior ----------
         var list: List = intent.getParcelableExtra(LIST)!!
         textViewListName.text = list.name
         current_list = list
-        //------------------------------------------------
+        //--------------------------------------------------
 
-        //Recycler View UnCompletedItems
+        //Recycler View UnCompletedItems----------------------------------
         linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2
         adapter2 = UncompleteItemsAdapter(current_list!!.list_items_uncompleted,this)
         recyclerViewUncompleted.adapter = adapter2
         itemsCreatedCounter=list.list_items_uncompleted.size+1
+        //----------------------------------------------------------------
 
-        //Recycler View CompletedItems
+        //Recycler View CompletedItems---------------------------------------------
         linearLayoutManager3 = LinearLayoutManager(this)
         recyclerViewCompleted.layoutManager = linearLayoutManager3
         adapter3 = UncompleteItemsAdapter(current_list!!.list_items_completed,this)
         recyclerViewCompleted.adapter = adapter3
-
+        //--------------------------------------------------------------------------
 
         //Se devulve a la vista anterior
         buttonBack.setOnClickListener(){
