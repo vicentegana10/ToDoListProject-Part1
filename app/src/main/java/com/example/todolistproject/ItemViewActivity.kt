@@ -1,12 +1,15 @@
 package com.example.todolistproject
 // Este es el manejo de la vista personaliza de cada item, no se usa para esta entrega.
 
+import Dialogs.DialogChangeItemName
+import Dialogs.dialogChangeItemNameListener
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.todolistproject.classes.Item
 import kotlinx.android.synthetic.main.activity_item_view.*
@@ -15,7 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class ItemViewActivity : AppCompatActivity() {
+class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
 
     companion object {
         var ITEM = "ITEM"
@@ -38,6 +41,11 @@ class ItemViewActivity : AppCompatActivity() {
         textViewDate.text = item?.fechaPlazo
         edit = item?.boolPriority
 
+        if(item!!.boolCompleted){
+            buttonCompleteItem.text="Completado"
+        }
+        else{buttonCompleteItem.text="En progreso"}
+
         if(edit!!){
             imageViewStar.setImageResource(R.drawable.ic_star_yellow_24dp)
         }
@@ -53,6 +61,10 @@ class ItemViewActivity : AppCompatActivity() {
         imageViewStar.setOnClickListener(){
             EditPriority()
         }
+
+        //buttonCompleteItem.setOnClickListener(){
+        //    EditCompleted()
+        //}
 
     }
 
@@ -87,6 +99,19 @@ class ItemViewActivity : AppCompatActivity() {
         edit = !edit!!
     }
 
+    fun EditCompleted(){
+        if (item?.boolCompleted == true){
+            item?.boolCompleted = false
+            buttonCompleteItem.text="Completar"
+            Toast.makeText(applicationContext,"Ahora el item esta en progreso", Toast.LENGTH_LONG).show()
+        }
+        else{
+            item?.boolCompleted = true
+            buttonCompleteItem.text="En progreso"
+            Toast.makeText(applicationContext,"Ahora el item esta completado", Toast.LENGTH_LONG).show()
+        }
+    }
+
     override fun onBackPressed() {
         val data = Intent().apply {
             putExtra(ITEM,item)
@@ -95,5 +120,14 @@ class ItemViewActivity : AppCompatActivity() {
         setResult(Activity.RESULT_OK,data)
         finish()
         super.onBackPressed()
+    }
+
+    fun changeNameButtonClicked(view: View){
+        val dialogChangeName = DialogChangeItemName()
+        dialogChangeName.show(supportFragmentManager, "dialogProduct")
+    }
+    override fun changeItemName(nameItem: String){
+        item?.name = nameItem
+        textViewItemName.text = item?.name
     }
 }

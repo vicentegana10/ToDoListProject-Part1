@@ -37,6 +37,8 @@
             android:gravity="center_horizontal"
             android:text="Nombre Item"
             android:textSize="20dp" />
+
+
     </LinearLayout>
 
     <TextView
@@ -190,7 +192,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Completar" />
+            android:background="#B4B3B8"
+            android:clickable="false"
+            android:text="Estado" />
     </LinearLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/renameItemButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#6B7CDA"
+        android:clickable="true"
+        android:onClick="changeNameButtonClicked"
+        app:backgroundTint="#DADADA"
+        app:borderWidth="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_edit_black_24dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

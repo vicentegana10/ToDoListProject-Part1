@@ -1,5 +1,7 @@
 package com.example.todolistproject.adapters
 
+import Dialogs.DialogChangeItemName
+import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -65,9 +67,7 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClick
             view.imageViewItemDone.setOnClickListener(){
                 clickListener.changeStateItem(itemList,adapterPosition)
             }
-            view.renameItemButton.setOnClickListener(){
-                Toast.makeText(view.context,"Desplegar dialog para cambiar nombre de "+itemList.name, Toast.LENGTH_LONG).show()
-            }
+
 
         }
     }
