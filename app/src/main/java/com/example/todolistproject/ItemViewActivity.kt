@@ -40,10 +40,10 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         textViewCreatedDate.text = "Creado el " + item?.fechaDeCreacion
         textViewDate.text = item?.fechaPlazo
         edit = item?.boolPriority
-        if (item!!.nota == ""){
-            textView5.setText("Agregar nota...")
+
+        if (item!!.nota != ""){
+            textView5.setText(item!!.nota)
         }
-        else{ textView5.setText(item!!.nota) }
 
         if(item!!.boolCompleted){
             buttonCompleteItem.text="Completado"

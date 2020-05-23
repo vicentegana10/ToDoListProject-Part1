@@ -51,8 +51,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         restoreContent(savedInstanceState)
         listLayout = activity_content_list
         var user:User = intent.getParcelableExtra(USER)
-        userLog = user
-        textViewUsername.text = user.email
+
+        textViewUsername.text = user?.name
 
         recyclerViewLists.adapter = ListsAdapter(userToDoList,this,this)
         recyclerViewLists.layoutManager = LinearLayoutManager(this)
@@ -63,7 +63,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         }
 
         textViewUsername.setOnClickListener(){
-            onUsernameClicked(user)
+            onUsernameClicked(user!!)
         }
 
         //Se implemetó el drag and drop, cambia la listas de lugar, y se eleminan hacia el lado

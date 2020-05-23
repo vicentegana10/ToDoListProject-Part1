@@ -19,7 +19,7 @@ class AppMenuActivity : AppCompatActivity() {
 
         var user:User = intent.getParcelableExtra(USER)
         userLog1 = user
-        textViewUsernameInAppMenu.text=(user.name+" "+user.lastName)
+        textViewUsernameInAppMenu.text=(user.name+" "+user.last_name)
         textViewtextViewEmailInAppMenu.text=user.email
         //imageViewAccountBox.srcCompat = user1.profilePic    ESO PARA EL FINAL PORQUE CREO QUE SACA UN URL DE LA API, LO DEJE ASI MIENTRAS
 

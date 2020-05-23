@@ -173,7 +173,7 @@
                 android:id="@+id/textView5"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Text Nota" />
+                android:hint = "Agregar Nota..." />
         </HorizontalScrollView>
 
         <Button

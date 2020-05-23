@@ -24,7 +24,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
         userLog1 = user
         textViewProfileEmail.text=(textViewProfileEmail.text.toString()+user.email)
         textViewProfileName.text=(textViewProfileName.text.toString()+user.name)
-        textViewProfileLastName.text=(textViewProfileLastName.text.toString()+user.lastName)
+        textViewProfileLastName.text=(textViewProfileLastName.text.toString()+user.last_name)
         textViewProfilePhone.text=(textViewProfilePhone.text.toString()+user.phone)
 
         buttonBackMyProfile.setOnClickListener(){
@@ -58,7 +58,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
             textViewProfileName.text = ("Nombre: " + newName)
         }
         if (type=="lastName") {
-            user.lastName = newName
+            user.last_name = newName
             textViewProfileLastName.text = ("Apellido: " + newName)
         }
         if (type=="phone") {

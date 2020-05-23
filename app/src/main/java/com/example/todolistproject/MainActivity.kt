@@ -4,38 +4,58 @@ package com.example.todolistproject
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.todolistproject.ToDoListsActivity.Companion.USER
+import com.example.todolistproject.networking.ApiService
+import com.example.todolistproject.networking.UserApi
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main.view.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
 
+    var user: User ?= null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val request = ApiService.buildService(UserApi::class.java)
+        val call = request.getUser()
+        call.enqueue(object : Callback<User> {
+            override fun onResponse(call: Call<User>, response: Response<User>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        var userResponse:User = User(
+                            response.body()!!.email,
+                            response.body()!!.name,
+                            response.body()!!.last_name,
+                            response.body()!!.phone,
+                            response.body()!!.profile_photo,
+                            "password"
+                        )
+                        user = userResponse
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<User>, t: Throwable) {
+                //Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     //Al apretar ingresar, lleva a la vista de lista
     fun onLoginButtonClick(view: View) {
-        if (editTextMail.text.toString()!="") {
-            val intent = Intent(view.context, ToDoListsActivity::class.java)
-            val newUser: User = User(
-                "NombreDEFAULT",
-                "ApellidoDEFAULT",
-                editTextMail.text.toString(),
-                editTextPassword.text.toString(),
-                "PhoneDEFAULT",
-                "@drawable/ic_account_box_grey_96dp"
-            )
-            intent.putExtra(USER, newUser)
-            view.context.startActivity(intent)
-        }
-        else{Toast.makeText(view.context,"Campo Email vacío", Toast.LENGTH_LONG).show()}
+        val intent = Intent(view.context, ToDoListsActivity::class.java)
+        intent.putExtra(USER, user)
+        startActivity(intent)
     }
 
     fun onForgotPasswordButtonClick(v: View){
@@ -45,7 +65,8 @@ class MainActivity : AppCompatActivity() {
     fun onRegisterButtonClick(v: View){
             Toast.makeText(v.context,"No implementado aun", Toast.LENGTH_LONG).show()
     } // Para registrarse
+
 }
 
 @Parcelize
-data class User(var name: String, var lastName: String,var email: String,val password:String, var phone: String, var profilePic: String): Parcelable
+data class User(var email: String,var name: String, var last_name: String, var phone: String, var profile_photo: String, val password:String): Parcelable
