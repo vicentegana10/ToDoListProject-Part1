@@ -22,6 +22,7 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
 
     var user: User ?= null
+    var confirmResponse: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
                             "password"
                         )
                         user = userResponse
+                        confirmResponse = true
                     }
                 }
             }
@@ -53,9 +55,14 @@ class MainActivity : AppCompatActivity() {
 
     //Al apretar ingresar, lleva a la vista de lista
     fun onLoginButtonClick(view: View) {
-        val intent = Intent(view.context, ToDoListsActivity::class.java)
-        intent.putExtra(USER, user)
-        startActivity(intent)
+        if(confirmResponse){
+            val intent = Intent(view.context, ToDoListsActivity::class.java)
+            intent.putExtra(USER, user)
+            startActivity(intent)
+        }
+        else{
+            Toast.makeText(view.context,"Esperando Respuesta", Toast.LENGTH_LONG).show()
+        }
     }
 
     fun onForgotPasswordButtonClick(v: View){
