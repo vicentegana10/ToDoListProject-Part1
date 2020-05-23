@@ -6,6 +6,7 @@ import Dialogs.dialogChangeListener
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.abs.clase11.utils.loadPhoto
 import kotlinx.android.synthetic.main.activity_my_profile.*
 
 class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
@@ -26,6 +27,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
         textViewProfileName.text=(textViewProfileName.text.toString()+user.name)
         textViewProfileLastName.text=(textViewProfileLastName.text.toString()+user.last_name)
         textViewProfilePhone.text=(textViewProfilePhone.text.toString()+user.phone)
+        imageViewAccountCircle.loadPhoto(user.profile_photo)
 
         buttonBackMyProfile.setOnClickListener(){
             backToAppMenu(user)

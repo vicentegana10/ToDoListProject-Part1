@@ -3,6 +3,7 @@ package com.example.todolistproject
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.abs.clase11.utils.loadPhoto
 import kotlinx.android.synthetic.main.activity_app_menu.*
 
 class AppMenuActivity : AppCompatActivity() {
@@ -21,7 +22,7 @@ class AppMenuActivity : AppCompatActivity() {
         userLog1 = user
         textViewUsernameInAppMenu.text=(user.name+" "+user.last_name)
         textViewtextViewEmailInAppMenu.text=user.email
-        //imageViewAccountBox.srcCompat = user1.profilePic    ESO PARA EL FINAL PORQUE CREO QUE SACA UN URL DE LA API, LO DEJE ASI MIENTRAS
+        imageViewAccountBox.loadPhoto(user.profile_photo)    //ESO PARA EL FINAL PORQUE CREO QUE SACA UN URL DE LA API, LO DEJE ASI MIENTRAS
 
         ButtonLogOut.setOnClickListener(){
             LogOut()
