@@ -40,6 +40,10 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         textViewCreatedDate.text = "Creado el " + item?.fechaDeCreacion
         textViewDate.text = item?.fechaPlazo
         edit = item?.boolPriority
+        if (item!!.nota == ""){
+            textView5.setText("Agregar nota...")
+        }
+        else{ textView5.setText(item!!.nota) }
 
         if(item!!.boolCompleted){
             buttonCompleteItem.text="Completado"
@@ -65,6 +69,9 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         //buttonCompleteItem.setOnClickListener(){
         //    EditCompleted()
         //}
+        buttonSaveNote.setOnClickListener(){
+            SaveNote()
+        }
 
     }
 
@@ -112,6 +119,10 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         }
     }
 
+    fun SaveNote(){
+        item?.nota  = textView5.text.toString()
+    }
+
     override fun onBackPressed() {
         val data = Intent().apply {
             putExtra(ITEM,item)
@@ -129,5 +140,10 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
     override fun changeItemName(nameItem: String){
         item?.name = nameItem
         textViewItemName.text = item?.name
+    }
+    override fun onPause(){
+        super.onPause()
+        println("en pausa")
+
     }
 }

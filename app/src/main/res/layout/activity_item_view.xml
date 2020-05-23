@@ -158,22 +158,31 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <HorizontalScrollView
-            android:layout_width="409dp"
-            android:layout_height="163dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView4"
             app:layout_constraintVertical_bias="0.0"
-            tools:layout_editor_absoluteX="1dp"
             tools:ignore="MissingConstraints">
 
 
-            <TextView
+            <EditText
                 android:id="@+id/textView5"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="Text Nota" />
         </HorizontalScrollView>
+
+        <Button
+            android:id="@+id/buttonSaveNote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Guardar Cambios"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
@@ -209,4 +218,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_edit_black_24dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
