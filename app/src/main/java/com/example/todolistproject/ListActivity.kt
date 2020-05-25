@@ -7,9 +7,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.CheckBox
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -18,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todolistproject.ItemViewActivity.Companion.ITEM
 import com.example.todolistproject.ItemViewActivity.Companion.POS
-import com.example.todolistproject.adapters.CompleteItemsAdapter
 import com.example.todolistproject.adapters.OnUnCompleteItemClickListener
 import com.example.todolistproject.adapters.UncompleteItemsAdapter
 import com.example.todolistproject.classes.Item
@@ -119,6 +116,46 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerViewUncompleted)
+
+        //Drag and drop items completados
+        val itemTouchHelperCallback2 = object : ItemTouchHelper.Callback() {
+            override fun getMovementFlags(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ): Int {
+                return makeMovementFlags(ItemTouchHelper.UP.or(ItemTouchHelper.DOWN),ItemTouchHelper.RIGHT)
+            }
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val iniPosition = viewHolder.adapterPosition
+                val finPosition = target.adapterPosition
+                adapter3.changeListPosition(iniPosition,finPosition)
+                adapter3.notifyItemMoved(iniPosition,finPosition)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val posicion = viewHolder.adapterPosition
+                val item = adapter3.getItem(posicion)
+                adapter3.deleteItem(posicion)
+                adapter3.notifyItemRemoved(posicion)
+                val snackbar = Snackbar.make(itemLayout,"Eliminaste un item",Snackbar.LENGTH_LONG)
+                snackbar.setAction("Deshacer",{
+                    adapter3.restoreItem(posicion,item)
+                    adapter3.notifyItemInserted(posicion)
+                })
+                snackbar.setActionTextColor(Color.BLUE)
+                snackbar.show()
+            }
+
+        }
+
+        val itemTouchHelper2 = ItemTouchHelper(itemTouchHelperCallback2)
+        itemTouchHelper2.attachToRecyclerView(recyclerViewCompleted)
     }
 
     //Se agrega un item a la lista
@@ -211,5 +248,11 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        println("ON RESUME ACA--------------------------")
+        adapter2.notifyDataSetChanged()
+        adapter3.notifyDataSetChanged()
+    }
 
 }
