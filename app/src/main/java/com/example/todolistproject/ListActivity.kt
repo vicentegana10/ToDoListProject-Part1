@@ -166,7 +166,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     fun onAddItemToListButtonClick(view: View){
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val fechaDeCreacion: String = simpleDateFormat.format(Date())
-        var newItem = Item(false, "Item  $itemsCreatedCounter",false,fechaDeCreacion,fechaDeCreacion,"Agregar notas...")
+        var newItem = Item(false, "Item  $itemsCreatedCounter",false,fechaDeCreacion,fechaDeCreacion,"")
         itemsCreatedCounter++
         current_list?.list_items_uncompleted!!.add(newItem)
         adapter2.notifyItemInserted(current_list!!.list_items_uncompleted.size )

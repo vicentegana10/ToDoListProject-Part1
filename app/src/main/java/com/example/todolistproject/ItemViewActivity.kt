@@ -72,7 +72,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
 
     }
 
-    //Se deita la fecha de plazo
+    //Se edita la fecha de plazo
     fun EditDate(){
 
         var cal = Calendar.getInstance()
