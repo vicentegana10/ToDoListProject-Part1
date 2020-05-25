@@ -1,5 +1,5 @@
 package com.example.todolistproject
-
+// Nueva activity creada para ver el perfil o cerrar sesion
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,6 +18,7 @@ class AppMenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_menu)
 
+        // Muestra en su view el nombre y apellidos, el mail y la foto gracias a GlideAppModule en ImageViewExtension
         var user:User = intent.getParcelableExtra(USER)
         userLog1 = user
         textViewUsernameInAppMenu.text=(user.name+" "+user.last_name)
@@ -38,17 +39,20 @@ class AppMenuActivity : AppCompatActivity() {
         }
     }
 
+    // una funcion para cerrar sesion
     fun LogOut(){
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 
+    // funcion para ir a la View del perfil
     fun onMyProfileClicked(user1: User){
         val intent4 = Intent(this,MyProfileActivity::class.java)
         intent4.putExtra(USER,user1)
         startActivityForResult(intent4,1)
     }
 
+    // boton flecha para volver a las ToDoLists
     fun backToToDoLists(user: User){
         val intent3 = Intent(this,ToDoListsActivity::class.java)
         intent3.putExtra(USER,user)

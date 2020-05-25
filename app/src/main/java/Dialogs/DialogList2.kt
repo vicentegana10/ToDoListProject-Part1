@@ -1,4 +1,5 @@
 package Dialogs
+//Dialog para: Cambiar nombre de lista.  Recibe la posicion de la lista  y solo es valida si el valor nuevo tiene un largo mayor a 0.
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -54,6 +55,5 @@ class DialogList2 : DialogFragment() {
 }
 
 interface dialogList2Listener{
-    //fun addList(nameList: String)
     fun changeName(nameList: String,indexRec : Int)
 }

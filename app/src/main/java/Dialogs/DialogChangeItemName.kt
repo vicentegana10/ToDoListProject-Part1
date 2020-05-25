@@ -1,5 +1,5 @@
 package Dialogs
-
+// Dialog para: Cambiar nombre del Item.  No recibe argumentos y solo es valida si el valor nuevo tiene un largo mayor a 0.
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -54,6 +54,5 @@ class DialogChangeItemName : DialogFragment() {
 }
 
 interface dialogChangeItemNameListener{
-    //fun addList(nameList: String)
     fun changeItemName(nameItem: String)
 }

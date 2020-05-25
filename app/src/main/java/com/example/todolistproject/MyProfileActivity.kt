@@ -1,6 +1,5 @@
 package com.example.todolistproject
-
-
+// Nueva Activity para ver el perfil del usuario y poder editar su informacion
 import Dialogs.DialogChangeProfileName
 import Dialogs.dialogChangeListener
 import android.content.Intent
@@ -21,6 +20,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_profile)
 
+        // Se muestra en la View los datos del usuario
         var user: User = intent.getParcelableExtra(USER)
         userLog1 = user
         textViewProfileEmail.text=(textViewProfileEmail.text.toString()+user.email)
@@ -31,8 +31,10 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
 
         buttonBackMyProfile.setOnClickListener(){
             backToAppMenu(user)
-            //onBackPressed() //pasarle el User editado? con onBackPressed nose si sirve, VER PERSISTENCIA
+            //onBackPressed()
         }
+
+        // CLICKLISTENERS para cuando se quiera editar un campo, se abrirá un Dialog que recibe como parametro que se quiere cambiar
         imageViewEditName.setOnClickListener() {
             onChangeProfileAtributeButtonClick(user,"name")
         }
@@ -44,16 +46,17 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
         }
     }
 
+    // Aca se abre el Dialog recibiendo usuario y lo que se desea cambiar
     fun onChangeProfileAtributeButtonClick(user: User, type: String){
         val dialogChange = DialogChangeProfileName()
         val userAndTypeAsParameter = Bundle()
         userAndTypeAsParameter.putParcelable("KEY1",user)
         userAndTypeAsParameter.putString("KEY2",type)
-
         dialogChange.arguments = userAndTypeAsParameter
         dialogChange.show(supportFragmentManager, "dialogChange")
     }
 
+    // Segun el tipo que haya recibido el Dialog, se cambiaraá lo inidcado
     override fun changeName(newName: String, user: User,type: String){
         if (type=="name") {
             user.name = newName

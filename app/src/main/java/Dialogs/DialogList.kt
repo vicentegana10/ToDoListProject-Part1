@@ -1,5 +1,5 @@
 package Dialogs
-
+// Dialog para: Agregar una ToDoList.  No recibe argumentos y solo es valida si el valor nuevo tiene un largo mayor a 0.
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
@@ -24,8 +24,8 @@ class DialogList : DialogFragment() {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
             // Get the layout inflater
-            val inflater = requireActivity().layoutInflater;
-            var view: View = inflater.inflate(R.layout.dialog_list,null)
+            val inflater = requireActivity().layoutInflater
+            val view: View = inflater.inflate(R.layout.dialog_list,null)
             // Inflate and set the layout for the dialog
             // Pass null as the parent view because its going in the dialog layout
 
