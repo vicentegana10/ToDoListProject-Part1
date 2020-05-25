@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.example.todolistproject.R
 import kotlinx.android.synthetic.main.dialog_list2.view.*
@@ -28,8 +29,11 @@ class DialogList2 : DialogFragment() {
             builder.setView(view)
                 // Add action buttons
                 .setPositiveButton("Cambiar", DialogInterface.OnClickListener { dialog, id ->
-                    //listener!!.addList(view.editTextList.text.toString())
-                    listener!!.changeName(view.editTextList2.text.toString(),indexRecibido.toString().toInt())
+                    if (view.editTextList2.text.toString()!=""){
+                        listener!!.changeName(view.editTextList2.text.toString(),indexRecibido.toString().toInt())}
+                    else{
+                        Toast.makeText(view.context,"Error, ingrese valor válido", Toast.LENGTH_LONG).show()
+                        getDialog()?.cancel()}
                 })
                 .setNegativeButton("Cancelar", DialogInterface.OnClickListener { dialog, id ->
                     getDialog()?.cancel()
