@@ -73,6 +73,10 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
            onBackPressed()
         }
 
+        if(!expand){
+            LinearCompleted.visibility = View.GONE
+        }
+        //Expande el recycler view de los completados
         textViewShowCompleted.setOnClickListener(){
             expandRecyclerView()
         }
@@ -173,7 +177,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         Toast.makeText(view.context,"No implementado aun",Toast.LENGTH_LONG).show()
     } // Tiene que compartir lista
 
-    //Devuelve la lista actualizada con todos los items dentro, se vuelve a la vista anterio
+    //Devuelve la lista actualizada con todos los items dentro, se vuelve a la vista anterior
     override fun onBackPressed() {
         val data = Intent().apply {
             putExtra(LIST,current_list)
@@ -182,12 +186,11 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         finish()
         super.onBackPressed()
     }
-
+    //Funcion que expande el recycler view de los completados
     fun expandRecyclerView(){
-
         if(expand){
-            textViewShowCompleted.text = "Mostrar completados"
             LinearCompleted.visibility = View.GONE
+            textViewShowCompleted.text = "Mostrar completados"
         }
         else{
             LinearCompleted.visibility = View.VISIBLE
@@ -196,6 +199,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         expand = !expand
     }
 
+    //Se va al vista del item cuando se da click en uno de estos
     override fun onItemClicked(item: Item,position: Int) {
         val intent = Intent(this, ItemViewActivity::class.java)
         if(item.boolCompleted){
@@ -210,6 +214,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         }
     }
 
+    //Funcion que cambia el estado del item de completado a no completado
     override fun changeStateItem(item: Item, position: Int) {
         if(item.boolCompleted){
             item.boolCompleted = false
@@ -227,6 +232,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         }
     }
 
+    //Respuesta de la Item Activity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 2) {
@@ -250,7 +256,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
     override fun onResume() {
         super.onResume()
-        println("ON RESUME ACA--------------------------")
         adapter2.notifyDataSetChanged()
         adapter3.notifyDataSetChanged()
     }

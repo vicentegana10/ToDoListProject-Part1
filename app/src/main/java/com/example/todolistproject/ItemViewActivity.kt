@@ -26,13 +26,13 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
     }
 
     var item: Item ?= null
-    var edit: Boolean ?= null
-    var position: String ?= null
+    var edit: Boolean ?= null //Bool qu indica la prioridad
+    var position: String ?= null //Posicion del item
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_item_view)
-
+        //Recive el item actual
         item = intent.getParcelableExtra(ITEM)!!
         position = intent.getStringExtra(POS)!!
 
@@ -57,24 +57,22 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         buttonBackItem.setOnClickListener(){
             onBackPressed()
         }
-
+        //Se edita la fecha de plazo al clickear el calendario
         imageViewCalendar.setOnClickListener(){
             EditDate()
         }
-
+        //Se edita la prioridad al clickear la estrella
         imageViewStar.setOnClickListener(){
             EditPriority()
         }
-
-        //buttonCompleteItem.setOnClickListener(){
-        //    EditCompleted()
-        //}
+        //Guardan los cambios de la nota al clickear el boton "guardar cambios"
         buttonSaveNote.setOnClickListener(){
             SaveNote()
         }
 
     }
 
+    //Se deita la fecha de plazo
     fun EditDate(){
 
         var cal = Calendar.getInstance()
@@ -83,8 +81,8 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
             cal.set(Calendar.YEAR, year)
             cal.set(Calendar.MONTH, monthOfYear)
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            val myFormat = "dd-MM-yyyy"
-            val sdf = SimpleDateFormat(myFormat, Locale.US)
+            val format_date = "dd-MM-yyyy"
+            val sdf = SimpleDateFormat(format_date, Locale.US)
             textViewDate.text = sdf.format(cal.time)
             item?.fechaPlazo = sdf.format(cal.time)
         }
@@ -95,6 +93,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
             cal.get(Calendar.DAY_OF_MONTH)).show()
     }
 
+    //Edita la prioridad del item
     fun EditPriority() {
         if (edit!!) {
             imageViewStar.setImageResource(R.drawable.ic_star_border_black_24dp)
@@ -118,7 +117,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
             Toast.makeText(applicationContext,"Ahora el item esta completado", Toast.LENGTH_LONG).show()
         }
     }
-
+    //Se guarda la nota editada
     fun SaveNote(){
         item?.nota  = textView5.text.toString()
     }
@@ -132,18 +131,17 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         finish()
         super.onBackPressed()
     }
-
+    //Se abre el dialog cuando se hace click en el boton
     fun changeNameButtonClicked(view: View){
         val dialogChangeName = DialogChangeItemName()
         dialogChangeName.show(supportFragmentManager, "dialogProduct")
     }
+    //Se edita el nombre
     override fun changeItemName(nameItem: String){
         item?.name = nameItem
         textViewItemName.text = item?.name
     }
     override fun onPause(){
         super.onPause()
-        println("en pausa")
-
     }
 }

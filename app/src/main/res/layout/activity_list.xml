@@ -7,36 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ListActivity">
 
-
-    <!--ARREGLAR TAMAÑO PORQUE AL LLENARSE USA TODA LA VIEW-->
-
-    <!--Your comment
-        <Button
-            android:id="@+id/buttonShowComplete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onShowCompleteButtonClick"
-            android:text="Mostrar Completados"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayoutEditShareList"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
-            app:layout_constraintVertical_bias="0.646" />
-
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewCompleted"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="invisible"
-            android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonShowComplete"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayoutEditShareList"/>
-
-        -->
-
     <LinearLayout
         android:id="@+id/linearLayoutEditShareList"
         android:layout_width="match_parent"
@@ -141,6 +111,7 @@
         android:id="@+id/textViewShowCompleted"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Mostrar completados"
         app:layout_constraintStart_toStartOf="parent"

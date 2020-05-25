@@ -22,7 +22,7 @@ class AppMenuActivity : AppCompatActivity() {
         userLog1 = user
         textViewUsernameInAppMenu.text=(user.name+" "+user.last_name)
         textViewtextViewEmailInAppMenu.text=user.email
-        imageViewAccountBox.loadPhoto(user.profile_photo)    //ESO PARA EL FINAL PORQUE CREO QUE SACA UN URL DE LA API, LO DEJE ASI MIENTRAS
+        imageViewAccountBox.loadPhoto(user.profile_photo)
 
         ButtonLogOut.setOnClickListener(){
             LogOut()

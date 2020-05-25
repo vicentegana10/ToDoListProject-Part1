@@ -61,8 +61,12 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         ButtonAddList.setOnClickListener(){
             onAddListButtonClick()
         }
-
+        //Nos envia al menu
         textViewUsername.setOnClickListener(){
+            onUsernameClicked(user!!)
+        }
+        //Nos envia al menu
+        imageViewLogoUsername.setOnClickListener(){
             onUsernameClicked(user!!)
         }
 

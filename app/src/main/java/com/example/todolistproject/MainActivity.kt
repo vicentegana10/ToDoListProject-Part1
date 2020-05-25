@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //Se consume el usuario desde la API
         val request = ApiService.buildService(UserApi::class.java)
         val call = request.getUser()
         call.enqueue(object : Callback<User> {
@@ -45,10 +46,13 @@ class MainActivity : AppCompatActivity() {
                         confirmResponse = true
                     }
                 }
+                else{
+                    Toast.makeText(this@MainActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onFailure(call: Call<User>, t: Throwable) {
-                //Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
