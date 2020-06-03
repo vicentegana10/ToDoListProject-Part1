@@ -22,12 +22,16 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.example.todolistproject.AppMenuActivity.Companion.USER
 import com.example.todolistproject.ListActivity.Companion.LIST
 import com.example.todolistproject.adapters.ListsAdapter
 import com.example.todolistproject.adapters.OnButtonClickListener
 import com.example.todolistproject.adapters.OnItemClickListener
 import com.example.todolistproject.classes.Item
+import com.example.todolistproject.model.Database
+import com.example.todolistproject.model.UserRoom
+import com.example.todolistproject.model.UserRoomDao
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_to_do_lists.*
@@ -45,6 +49,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
     lateinit var listLayout:ConstraintLayout
 
+    lateinit var database: UserRoomDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_to_do_lists)
@@ -56,6 +62,21 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
         recyclerViewLists.adapter = ListsAdapter(userToDoList,this,this)
         recyclerViewLists.layoutManager = LinearLayoutManager(this)
+
+
+        // Cargar BASE DE DATOS CON .allowMainThreadQueries() NO ES ASINCRONA
+        database = Room.databaseBuilder(this, Database::class.java,"userRoom").allowMainThreadQueries().build().userRoomDao()
+
+        // ACA UN IF PARA VER SI EL USER DE LA API EXISTE O NO EN LA BBDD Y CREARLO SINO EXISTE
+        val userRoomActual = database.getUserRoomData(user.email)
+        if (userRoomActual==null){
+            val userToInsert =  UserRoom(user!!.email, user!!.name, user!!.last_name, user!!.phone, user!!.profile_photo, user!!.password)
+            database.insert(userToInsert)
+        }
+        // Aca una variable que se borra, es para ir viendo la bd en Debug
+        val usersInRoomDao  = database.getAllUsers()
+        println("inserted in BD")
+
 
         //Se agrega un lista al apretar el boton
         ButtonAddList.setOnClickListener(){

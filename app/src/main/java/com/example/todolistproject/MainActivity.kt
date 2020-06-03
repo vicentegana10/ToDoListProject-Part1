@@ -2,6 +2,7 @@ package com.example.todolistproject
 // Aca el manejo del login.   Es dummy pero recuerda el nombre del usuario y lo muestra despues.
 // Se crea la clase user.
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -12,8 +13,6 @@ import com.example.todolistproject.ToDoListsActivity.Companion.USER
 import com.example.todolistproject.networking.ApiService
 import com.example.todolistproject.networking.UserApi
 import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,9 +23,11 @@ class MainActivity : AppCompatActivity() {
     var user: User ?= null
     var confirmResponse: Boolean = false
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         //Se consume el usuario desde la API
         val request = ApiService.buildService(UserApi::class.java)
         val call = request.getUser()
@@ -55,6 +56,8 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
+
+
     }
 
     //Al apretar ingresar, lleva a la vista de lista
