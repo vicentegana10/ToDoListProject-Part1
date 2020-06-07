@@ -77,7 +77,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             LinearCompleted.visibility = View.GONE
         }
         //Expande el recycler view de los completados
-        textViewShowCompleted.setOnClickListener(){
+        buttonShowCompleted.setOnClickListener(){
             expandRecyclerView()
         }
 
@@ -190,11 +190,11 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     fun expandRecyclerView(){
         if(expand){
             LinearCompleted.visibility = View.GONE
-            textViewShowCompleted.text = "Mostrar completados"
+            buttonShowCompleted.text = "Mostrar completados"
         }
         else{
             LinearCompleted.visibility = View.VISIBLE
-            textViewShowCompleted.text = "Ocultar completados"
+            buttonShowCompleted.text = "Ocultar completados"
         }
         expand = !expand
     }

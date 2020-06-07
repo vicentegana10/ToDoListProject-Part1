@@ -13,6 +13,7 @@ import Dialogs.dialogListListener
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.View
@@ -58,7 +59,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         listLayout = activity_content_list
         var user:User = intent.getParcelableExtra(USER)
 
-        textViewUsername.text = user?.name
+        topAppBar.title = user?.name
 
         recyclerViewLists.adapter = ListsAdapter(userToDoList,this,this)
         recyclerViewLists.layoutManager = LinearLayoutManager(this)
@@ -70,7 +71,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         // ACA UN IF PARA VER SI EL USER DE LA API EXISTE O NO EN LA BBDD Y CREARLO SINO EXISTE
         val userRoomActual = database.getUserRoomData(user.email)
         if (userRoomActual==null){
-            val userToInsert =  UserRoom(user!!.email, user!!.name, user!!.last_name, user!!.phone, user!!.profile_photo, user!!.password)
+            val userToInsert =  UserRoom(user!!.email, user!!.name, user!!.last_name, user!!.phone, user!!.profile_photo, user!!.password) //,userToDoList)
             database.insert(userToInsert)
         }
         // Aca una variable que se borra, es para ir viendo la bd en Debug
@@ -83,13 +84,25 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
             onAddListButtonClick()
         }
         //Nos envia al menu
-        textViewUsername.setOnClickListener(){
+        //textViewUsername.setOnClickListener(){
+        topAppBar.setNavigationOnClickListener {
             onUsernameClicked(user!!)
+        }
+
+        topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.logo -> {
+                    // Handle favorite icon press
+                    Toast.makeText(applicationContext,"Nombre_Empresa. Since 2020",Toast.LENGTH_LONG).show()
+                    true
+                }
+                else -> false
+            }
         }
         //Nos envia al menu
-        imageViewLogoUsername.setOnClickListener(){
-            onUsernameClicked(user!!)
-        }
+        //imageViewLogoUsername.setOnClickListener(){
+        //    onUsernameClicked(user!!)
+        //}
 
         //Se implemetó el drag and drop, cambia la listas de lugar, y se eleminan hacia el lado
         val itemTouchHelperCallBack = object : ItemTouchHelper.Callback()  {
@@ -117,6 +130,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
                 ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).changeListPosition(iniPosition,finPosition)
                 recyclerViewLists.adapter?.notifyItemMoved(iniPosition,finPosition)
+
+                //userLog?.let { updateUserRoom(it) }
                 return true
             }
 
@@ -158,6 +173,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 }
                 snackbar.setActionTextColor(Color.BLUE)
                 snackbar.show()
+
+                //userLog?.let { updateUserRoom(it) }
             }
 
         }
@@ -204,6 +221,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         listsCreatedCounter++
         recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
 
+        //userLog?.let { updateUserRoom(it) }
+
     }
     //Cambia el nombre de la lista
     override fun changeName(nameList: String,indexRec : Int){
@@ -212,6 +231,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         updateList.name=nameList
         userToDoList.set(updateList.position,updateList)
         recyclerViewLists.adapter?.notifyItemChanged(updateList.position)
+
+        //userLog?.let { updateUserRoom(it) }
     }
     //Funcion logOut que genera un intent hacia login
     fun LogOut(){
@@ -249,6 +270,23 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
             }
         }
     }
+
+    /*
+    // FUNCION PARA ACTUALIZAR EL USERROOM DE LA BBDD
+    fun updateUserRoom(user: User){
+        AsyncTask.execute{
+            // LE PASAMOS EL USUARIO CON EL DATO YA CAMBIADO
+            val userRoomActual = database.getUserRoomData(user.email)
+            val userToUpdate =  UserRoom(userRoomActual.email, userRoomActual.name, userRoomActual.last_name, userRoomActual.phone, userRoomActual.profile_photo,
+                                        userRoomActual.password,userRoomActual.to_do_lists)
+            database.updateUser(userToUpdate)
+            // ESTO ESTA SOLO PARA VER DEBUG Y VER QUE FUNCIONA
+            val usersInRoomDao  = database.getAllUsers()
+            println("update Database")
+        }
+    }
+
+     */
 
 }
 

@@ -37,7 +37,11 @@ data class UserRoom(
     @ColumnInfo(name = PROFILE_PHOTO)
     val profile_photo: String,
     @ColumnInfo(name = PASSWORD)
-    val password: String
+    val password: String   /*,
+    @ColumnInfo(name = TO_DO_LISTS)
+    val to_do_lists:  ArrayList<com.example.todolistproject.List>
+    */
+
 ) {
     companion object {
         const val TABLE_NAME = "userRoom"
@@ -47,7 +51,7 @@ data class UserRoom(
         const val PHONE = "phone"
         const val PROFILE_PHOTO = "profile_photo"
         const val PASSWORD = "password"
-
+        const val TO_DO_LISTS = "to_do_lists"
 
     }
 }

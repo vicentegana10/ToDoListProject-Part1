@@ -103,7 +103,8 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
     fun updateUserRoom(user: User){
         AsyncTask.execute{
             // LE PASAMOS EL USUARIO CON EL DATO YA CAMBIADO
-            val userToUpdate =  UserRoom(user!!.email, user!!.name, user!!.last_name, user!!.phone, user!!.profile_photo, user!!.password)
+            val userRoomActual = database.getUserRoomData(user.email)
+            val userToUpdate =  UserRoom(user!!.email, user!!.name, user!!.last_name, user!!.phone, user!!.profile_photo, user!!.password)//,userRoomActual.to_do_lists)
             database.updateUser(userToUpdate)
             // ESTO ESTA SOLO PARA VER DEBUG Y VER QUE FUNCIONA
             val usersInRoomDao  = database.getAllUsers()

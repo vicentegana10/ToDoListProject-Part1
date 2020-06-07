@@ -7,6 +7,25 @@
     tools:context=".ToDoListsActivity"
     android:id="@+id/activity_content_list">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:menu="@menu/top_app_bar"
+        app:navigationIcon="@drawable/ic_account_circle_white_24dp"
+        app:title="page_title" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!--
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
@@ -14,8 +33,6 @@
         android:gravity="right"
         android:orientation="horizontal"
         tools:ignore="MissingConstraints">
-
-
 
         <ImageView
             android:id="@+id/imageViewLogoUsername"
@@ -57,6 +74,7 @@
 
 
     </LinearLayout>
+    -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewLists"
@@ -65,8 +83,7 @@
         android:layout_marginTop="55dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/ButtonAddList"
