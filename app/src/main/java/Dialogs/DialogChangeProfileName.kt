@@ -11,7 +11,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.example.todolistproject.R
-import com.example.todolistproject.User
+import com.example.todolistproject.model.UserRoom
 import kotlinx.android.synthetic.main.dialog_change_name.view.*
 
 class DialogChangeProfileName : DialogFragment() {
@@ -34,7 +34,7 @@ class DialogChangeProfileName : DialogFragment() {
                 // Add action buttons
                 .setPositiveButton("Cambiar", DialogInterface.OnClickListener { dialog, id ->
                     if (view.editTextDialogChange.text.toString()!=""){
-                        listener!!.changeName(view.editTextDialogChange.text.toString(),userRecibido as User,tipoRecibido as String)}
+                        listener!!.changeName(view.editTextDialogChange.text.toString(),userRecibido as UserRoom,tipoRecibido as String)}
                     else{
                         Toast.makeText(view.context,"Error, ingrese valor válido", Toast.LENGTH_LONG).show()
                         getDialog()?.cancel()}
@@ -58,6 +58,6 @@ class DialogChangeProfileName : DialogFragment() {
 }
 
 interface dialogChangeListener{
-    fun changeName(newName: String, user: User,type : String)
+    fun changeName(newName: String, user: UserRoom, type : String)
 }
 

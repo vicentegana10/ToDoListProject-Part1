@@ -19,7 +19,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
         var USER = "USER"
     }
 
-    var userLog1: User? = null//Usuario
+    var userLog1: UserRoom? = null//Usuario
 
     lateinit var database: UserRoomDao
 
@@ -29,7 +29,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
 
 
         // Se muestra en la View los datos del usuario
-        var user: User = intent.getParcelableExtra(USER)
+        var user: UserRoom = intent.getParcelableExtra(USER)
         userLog1 = user
 
         // Cargar BASE DE DATOS CON allowMainThreadQueries() ASIQUE NO ES ASINCRONA
@@ -64,7 +64,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
     }
 
     // Aca se abre el Dialog recibiendo usuario y lo que se desea cambiar
-    fun onChangeProfileAtributeButtonClick(user: User, type: String){
+    fun onChangeProfileAtributeButtonClick(user: UserRoom, type: String){
         val dialogChange = DialogChangeProfileName()
         val userAndTypeAsParameter = Bundle()
         userAndTypeAsParameter.putParcelable("KEY1",user)
@@ -74,7 +74,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
     }
 
     // Segun el tipo que haya recibido el Dialog, se cambiará lo inidcado Y SE ACTUALIZA BBDD DE ROOM
-    override fun changeName(newName: String, user: User,type: String){
+    override fun changeName(newName: String, user: UserRoom,type: String){
         if (type=="name") {
             user.first_name = newName
             textViewProfileName.text = ("Nombre: " + newName)
@@ -93,14 +93,14 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
         }
     }
 
-    fun backToAppMenu(user: User){
+    fun backToAppMenu(user: UserRoom){
         val intent3 = Intent(this,AppMenuActivity::class.java)
         intent3.putExtra(USER,user)
         startActivityForResult(intent3,1)
     }
 
     // FUNCION PARA ACTUALIZAR EL USERROOM DE LA BBDD
-    fun updateUserRoom(user: User){
+    fun updateUserRoom(user: UserRoom){
         AsyncTask.execute{
             // LE PASAMOS EL USUARIO CON EL DATO YA CAMBIADO
             val userRoomActual = database.getUserRoomData(user.email)

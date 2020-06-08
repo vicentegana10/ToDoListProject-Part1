@@ -44,7 +44,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         var USER = "USER"
     }
 
-    var userLog: User? = null//Usuario
+    var userLog: UserRoom? = null//Usuario
     var userToDoList = ArrayList<List>()//Lista con las ToDoList del usuario
     var listsCreatedCounter = 0//Contador de la cantidad de listas
 
@@ -57,7 +57,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         setContentView(R.layout.activity_to_do_lists)
         restoreContent(savedInstanceState)
         listLayout = activity_content_list
-        var user:User = intent.getParcelableExtra(USER)
+        var user:UserRoom = intent.getParcelableExtra(USER)
 
         topAppBar.title = user?.first_name
 
@@ -198,7 +198,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     }
 
     //Se abre el menu aplicacion
-    fun onUsernameClicked(user: User){
+    fun onUsernameClicked(user: UserRoom){
         val intent3 = Intent(this,AppMenuActivity::class.java)
         intent3.putExtra(USER,user)
         startActivityForResult(intent3,1)

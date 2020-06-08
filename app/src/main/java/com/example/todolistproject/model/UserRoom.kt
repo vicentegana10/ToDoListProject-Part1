@@ -1,8 +1,10 @@
 package com.example.todolistproject.model
 
+import android.os.Parcelable
 import androidx.room.*
 import com.example.todolistproject.model.UserRoom.Companion.EMAIL
 import com.example.todolistproject.model.UserRoom.Companion.TABLE_NAME
+import kotlinx.android.parcel.Parcelize
 
 // ACA VAN LAS CONSULTAS A LA BASE DE DATOS
 
@@ -23,26 +25,27 @@ interface UserRoomDao {
 }
 
 // ESTA ES LA CLASE USERROOM COMO ENTIDAD PARA LA BBDD, HABRIA QUE PONER USER NOMAS
+@Parcelize
 @Entity(tableName = TABLE_NAME)
 data class UserRoom(
     @PrimaryKey
     @ColumnInfo(name = EMAIL)
-    val email: String,
+    var email: String,
     @ColumnInfo(name = NAME)
-    val name: String,
+    var first_name: String,
     @ColumnInfo(name = LAST_NAME)
-    val last_name: String,
+    var last_name: String,
     @ColumnInfo(name = PHONE)
-    val phone: String,
+    var phone: String,
     @ColumnInfo(name = PROFILE_PHOTO)
-    val profile_photo: String,
+    var profile_photo: String,
     @ColumnInfo(name = PASSWORD)
-    val password: String   /*,
+    var password: String   /*,
     @ColumnInfo(name = TO_DO_LISTS)
     val to_do_lists:  ArrayList<com.example.todolistproject.List>
     */
 
-) {
+) : Parcelable {
     companion object {
         const val TABLE_NAME = "userRoom"
         const val EMAIL = "email"

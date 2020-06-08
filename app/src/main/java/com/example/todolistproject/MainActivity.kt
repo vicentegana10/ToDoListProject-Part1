@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.todolistproject.ToDoListsActivity.Companion.USER
+import com.example.todolistproject.model.UserRoom
 import com.example.todolistproject.networking.ApiService
 import com.example.todolistproject.networking.UserApi
 import com.example.todolistproject.utils.TOKEN
@@ -21,7 +22,7 @@ import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
-    var user: User ?= null
+    var user: UserRoom ?= null
     var confirmResponse: Boolean = false
 
 
@@ -32,18 +33,17 @@ class MainActivity : AppCompatActivity() {
         //Se consume el usuario desde la API
         val request = ApiService.buildService(UserApi::class.java)
         val call = request.getUser(TOKEN)
-        call.enqueue(object : Callback<User> {
-            override fun onResponse(call: Call<User>, response: Response<User>) {
+        call.enqueue(object : Callback<UserRoom> {
+            override fun onResponse(call: Call<UserRoom>, response: Response<UserRoom>) {
                 if (response.isSuccessful) {
                     if (response.body() != null) {
-                        var userResponse:User = User(
+                        var userResponse:UserRoom = UserRoom(
                             response.body()!!.email,
                             response.body()!!.first_name,
                             response.body()!!.last_name,
                             response.body()!!.phone,
                             response.body()!!.profile_photo,
-                            response.body()!!.api_key,
-                            "password"
+                            password = "password"
                         )
                         user = userResponse
                         confirmResponse = true
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<User>, t: Throwable) {
+            override fun onFailure(call: Call<UserRoom>, t: Throwable) {
                 Toast.makeText(this@MainActivity, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
@@ -84,5 +84,3 @@ class MainActivity : AppCompatActivity() {
 
 }
 
-@Parcelize
-data class User(var email: String,var first_name: String, var last_name: String, var phone: String, var profile_photo: String,var api_key: String,val password:String): Parcelable
