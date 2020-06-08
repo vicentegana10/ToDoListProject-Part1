@@ -6,12 +6,20 @@ import android.content.Intent
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.room.Room
 import com.abs.clase11.utils.loadPhoto
 import com.example.todolistproject.model.Database
 import com.example.todolistproject.model.UserRoom
 import com.example.todolistproject.model.UserRoomDao
+import com.example.todolistproject.networking.ApiService
+import com.example.todolistproject.networking.UserApi
+import com.example.todolistproject.utils.TOKEN
 import kotlinx.android.synthetic.main.activity_my_profile.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
 
@@ -108,8 +116,33 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
             database.updateUser(userToUpdate)
             // ESTO ESTA SOLO PARA VER DEBUG Y VER QUE FUNCIONA
             val usersInRoomDao  = database.getAllUsers()
-            println("update Database")
+            Log.d("Update",usersInRoomDao.toString())
         }
+        updateUserApi(user)
+    }
+
+    fun updateUserApi(user: UserRoom){
+        val request = ApiService.buildService(UserApi::class.java)
+        val call = request.updateUser(TOKEN,user)
+        call.enqueue(object : Callback<UserRoom> {
+            override fun onResponse(call: Call<UserRoom>, response: Response<UserRoom>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(response.message() == "OK"){
+                            Toast.makeText(this@MyProfileActivity, "Datos Actualizados", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                else{
+                    Toast.makeText(this@MyProfileActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<UserRoom>, t: Throwable) {
+                Toast.makeText(this@MyProfileActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
     }
 
 
