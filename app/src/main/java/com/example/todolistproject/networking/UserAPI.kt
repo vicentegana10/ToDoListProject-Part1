@@ -3,8 +3,9 @@ package com.example.todolistproject.networking
 import com.example.todolistproject.User
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Header
 
 interface UserApi {
-    @GET("get_user_info")
-    fun getUser(): Call<User>
+    @GET("users/get_self")
+    fun getUser(@Header("token") token: String?): Call<User>
 }

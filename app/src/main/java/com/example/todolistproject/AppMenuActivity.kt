@@ -21,7 +21,7 @@ class AppMenuActivity : AppCompatActivity() {
         // Muestra en su view el nombre y apellidos, el mail y la foto gracias a GlideAppModule en ImageViewExtension
         var user:User = intent.getParcelableExtra(USER)
         userLog1 = user
-        textViewUsernameInAppMenu.text=(user.name+" "+user.last_name)
+        textViewUsernameInAppMenu.text=(user.first_name+" "+user.last_name)
         textViewtextViewEmailInAppMenu.text=user.email
         imageViewAccountBox.loadPhoto(user.profile_photo)
 

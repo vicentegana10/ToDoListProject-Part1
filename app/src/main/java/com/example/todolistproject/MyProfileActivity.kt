@@ -41,7 +41,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
         textViewProfileLastName.text=(textViewProfileLastName.text.toString()+userRoomActual.last_name)
 
         textViewProfileEmail.text=(textViewProfileEmail.text.toString()+user.email)
-        textViewProfileName.text=(textViewProfileName.text.toString()+user.name)
+        textViewProfileName.text=(textViewProfileName.text.toString()+user.first_name)
         //textViewProfileLastName.text=(textViewProfileLastName.text.toString()+user.last_name)
         textViewProfilePhone.text=(textViewProfilePhone.text.toString()+user.phone)
         imageViewAccountCircle.loadPhoto(user.profile_photo)
@@ -76,7 +76,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
     // Segun el tipo que haya recibido el Dialog, se cambiará lo inidcado Y SE ACTUALIZA BBDD DE ROOM
     override fun changeName(newName: String, user: User,type: String){
         if (type=="name") {
-            user.name = newName
+            user.first_name = newName
             textViewProfileName.text = ("Nombre: " + newName)
             updateUserRoom(user)
 
@@ -104,7 +104,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
         AsyncTask.execute{
             // LE PASAMOS EL USUARIO CON EL DATO YA CAMBIADO
             val userRoomActual = database.getUserRoomData(user.email)
-            val userToUpdate =  UserRoom(user!!.email, user!!.name, user!!.last_name, user!!.phone, user!!.profile_photo, user!!.password)//,userRoomActual.to_do_lists)
+            val userToUpdate =  UserRoom(user!!.email, user!!.first_name, user!!.last_name, user!!.phone, user!!.profile_photo, user!!.password)//,userRoomActual.to_do_lists)
             database.updateUser(userToUpdate)
             // ESTO ESTA SOLO PARA VER DEBUG Y VER QUE FUNCIONA
             val usersInRoomDao  = database.getAllUsers()

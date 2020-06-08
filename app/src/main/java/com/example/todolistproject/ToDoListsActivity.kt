@@ -59,7 +59,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         listLayout = activity_content_list
         var user:User = intent.getParcelableExtra(USER)
 
-        topAppBar.title = user?.name
+        topAppBar.title = user?.first_name
 
         recyclerViewLists.adapter = ListsAdapter(userToDoList,this,this)
         recyclerViewLists.layoutManager = LinearLayoutManager(this)
@@ -71,7 +71,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         // ACA UN IF PARA VER SI EL USER DE LA API EXISTE O NO EN LA BBDD Y CREARLO SINO EXISTE
         val userRoomActual = database.getUserRoomData(user.email)
         if (userRoomActual==null){
-            val userToInsert =  UserRoom(user!!.email, user!!.name, user!!.last_name, user!!.phone, user!!.profile_photo, user!!.password) //,userToDoList)
+            val userToInsert =  UserRoom(user!!.email, user!!.first_name, user!!.last_name, user!!.phone, user!!.profile_photo, user!!.password) //,userToDoList)
             database.insert(userToInsert)
         }
         // Aca una variable que se borra, es para ir viendo la bd en Debug
