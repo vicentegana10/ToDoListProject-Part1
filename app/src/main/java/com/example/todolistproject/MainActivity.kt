@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.todolistproject.ToDoListsActivity.Companion.USER
 import com.example.todolistproject.networking.ApiService
 import com.example.todolistproject.networking.UserApi
-import com.example.todolistproject.utils.API_KEY
+import com.example.todolistproject.utils.TOKEN
 import kotlinx.android.parcel.Parcelize
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,10 +31,9 @@ class MainActivity : AppCompatActivity() {
 
         //Se consume el usuario desde la API
         val request = ApiService.buildService(UserApi::class.java)
-        val call = request.getUser(API_KEY)
+        val call = request.getUser(TOKEN)
         call.enqueue(object : Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {
-                Log.d("Holaaaaaaaaaaaaaa",response.body().toString())
                 if (response.isSuccessful) {
                     if (response.body() != null) {
                         var userResponse:User = User(
