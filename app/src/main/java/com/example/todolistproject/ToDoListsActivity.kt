@@ -16,6 +16,7 @@ import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -30,9 +31,7 @@ import com.example.todolistproject.adapters.ListsAdapter
 import com.example.todolistproject.adapters.OnButtonClickListener
 import com.example.todolistproject.adapters.OnItemClickListener
 import com.example.todolistproject.classes.Item
-import com.example.todolistproject.model.Database
-import com.example.todolistproject.model.UserRoom
-import com.example.todolistproject.model.UserRoomDao
+import com.example.todolistproject.model.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_to_do_lists.*
@@ -45,12 +44,13 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     }
 
     var userLog: UserRoom? = null//Usuario
-    var userToDoList = ArrayList<List>()//Lista con las ToDoList del usuario
+    var userToDoList = ArrayList<ListRoom>()//Lista con las ToDoList del usuario
     var listsCreatedCounter = 0//Contador de la cantidad de listas
 
     lateinit var listLayout:ConstraintLayout
 
     lateinit var database: UserRoomDao
+    lateinit var database_list: ListRoomDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +64,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         recyclerViewLists.adapter = ListsAdapter(userToDoList,this,this)
         recyclerViewLists.layoutManager = LinearLayoutManager(this)
 
-
+        database_list = Room.databaseBuilder(this, Database::class.java,"list").allowMainThreadQueries().build().listRoomDao()
         // Cargar BASE DE DATOS CON .allowMainThreadQueries() NO ES ASINCRONA
         database = Room.databaseBuilder(this, Database::class.java,"userRoom").allowMainThreadQueries().build().userRoomDao()
 
@@ -73,6 +73,19 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         if (userRoomActual==null){
             val userToInsert =  UserRoom(user!!.email, user!!.first_name, user!!.last_name, user!!.phone, user!!.profile_photo, user!!.password) //,userToDoList)
             database.insert(userToInsert)
+        }
+
+        //Si hay listas en la BBDD, se agregan a userToDoList
+        if(database_list.getAllList() != null){
+            if(userToDoList != null){
+                var countLists = 0
+                database_list.getAllListOrdered().forEach{
+                    userToDoList.add(it)
+                    countLists++
+                }
+                listsCreatedCounter = countLists
+                Log.d("Hola",countLists.toString())
+            }
         }
         // Aca una variable que se borra, es para ir viendo la bd en Debug
         val usersInRoomDao  = database.getAllUsers()
@@ -131,6 +144,10 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).changeListPosition(iniPosition,finPosition)
                 recyclerViewLists.adapter?.notifyItemMoved(iniPosition,finPosition)
 
+                //Se actualiza la posicion de las listas en la BBDD
+                userToDoList.forEach{
+                    database_list.insertList(it)
+                }
                 //userLog?.let { updateUserRoom(it) }
                 return true
             }
@@ -173,7 +190,6 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 }
                 snackbar.setActionTextColor(Color.BLUE)
                 snackbar.show()
-
                 //userLog?.let { updateUserRoom(it) }
             }
 
@@ -191,10 +207,11 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     }
 
     //Se abre el detalle de la lista
-    override fun onItemClicked(list: List) {
-        val intent2 = Intent(this, ListActivity::class.java)
+    override fun onItemClicked(list: ListRoom) {
+        Log.d("La listaaaa",database_list.getList(list.id!!).toString())
+        /*val intent2 = Intent(this, ListActivity::class.java)
         intent2.putExtra(LIST,userToDoList[list.position]) // se pasa el primer nombre no el del item apretado :/
-        startActivityForResult(intent2,1)
+        startActivityForResult(intent2,1)*/
     }
 
     //Se abre el menu aplicacion
@@ -205,7 +222,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     }
 
     //Abre el dialog para cambiar el nombre de la lista
-    override fun onButtonClicked(list: List) {
+    override fun onButtonClicked(list: ListRoom) {
         val dialogList = DialogList2()
         val indexAsParameter = Bundle()
         indexAsParameter.putInt("KEY1",list.position)
@@ -215,13 +232,16 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
     //Se añade un lista a userToDoList
     override fun addList(nameList: String){
-        var list_items_uncompleted = ArrayList<Item>()
+        /*var list_items_uncompleted = ArrayList<Item>()
         var list_items_completed = ArrayList<Item>()
-        userToDoList.add(List(nameList,listsCreatedCounter,list_items_uncompleted,list_items_completed))
+        userToDoList.add(List(nameList,listsCreatedCounter,list_items_uncompleted,list_items_completed))*/
+        AsyncTask.execute{
+            var list = ListRoom(null,nameList,listsCreatedCounter-1)
+            database_list.insertList(list)
+            userToDoList.add(list)
+        }
         listsCreatedCounter++
         recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
-
-        //userLog?.let { updateUserRoom(it) }
 
     }
     //Cambia el nombre de la lista
@@ -230,6 +250,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         val updateList = userToDoList.get(indexRec)
         updateList.name=nameList
         userToDoList.set(updateList.position,updateList)
+        //Se realiza update en la base de datos
+        database_list.insertList(updateList)
         recyclerViewLists.adapter?.notifyItemChanged(updateList.position)
 
         //userLog?.let { updateUserRoom(it) }
@@ -244,7 +266,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     private fun restoreContent(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
             userLog = savedInstanceState.getParcelable("user")
-            userToDoList = savedInstanceState.getParcelableArrayList<List>("UserList")!!
+            userToDoList = savedInstanceState.getParcelableArrayList<ListRoom>("UserList")!!
         }
     }
 
@@ -256,7 +278,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     }
 
     //Recibe una lista actualizada con todos los items añadidos en el detalle de cada lista
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
@@ -269,7 +291,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
             }
         }
-    }
+    }*/
 
     /*
     // FUNCION PARA ACTUALIZAR EL USERROOM DE LA BBDD

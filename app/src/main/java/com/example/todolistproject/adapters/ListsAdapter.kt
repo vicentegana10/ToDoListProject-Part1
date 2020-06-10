@@ -7,12 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todolistproject.List
 import com.example.todolistproject.R
 import com.example.todolistproject.ToDoListsActivity
+import com.example.todolistproject.model.ListRoom
 import kotlinx.android.synthetic.main.recyclerview_list_row.view.*
 import java.text.FieldPosition
 
-class ListsAdapter(private var userlist: ArrayList<List>,val itemClickListener: ToDoListsActivity,val buttonClickListener: ToDoListsActivity): RecyclerView.Adapter<ListsAdapter.ListViewHolder>() {
+class ListsAdapter(private var userlist: ArrayList<ListRoom>,val itemClickListener: ToDoListsActivity,val buttonClickListener: ToDoListsActivity): RecyclerView.Adapter<ListsAdapter.ListViewHolder>() {
 
-    fun getList(position: Int): List{
+    fun getList(position: Int): ListRoom{
         return userlist[position]
     }
 
@@ -20,7 +21,7 @@ class ListsAdapter(private var userlist: ArrayList<List>,val itemClickListener: 
         userlist.removeAt(position)
     }
 
-    fun restoreList(position: Int, list: List){
+    fun restoreList(position: Int, list: ListRoom){
         userlist.add(position,list)
         notifyItemInserted(position)
     }
@@ -45,13 +46,13 @@ class ListsAdapter(private var userlist: ArrayList<List>,val itemClickListener: 
 
     class ListViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener{
         private var view: View = v
-        private var list: List? = null
+        private var list: ListRoom? = null
 
         init {
             view.setOnClickListener(this)
         }
 
-        fun bindContact(list: List,clickListener: OnItemClickListener,clickListener2: OnButtonClickListener){
+        fun bindContact(list: ListRoom,clickListener: OnItemClickListener,clickListener2: OnButtonClickListener){
             this.list = list
             view.textViewList.text = list.name
 
@@ -70,8 +71,8 @@ class ListsAdapter(private var userlist: ArrayList<List>,val itemClickListener: 
 }
 
 interface OnItemClickListener{
-    fun onItemClicked(list: List)
+    fun onItemClicked(list: ListRoom)
 }
 interface OnButtonClickListener{
-    fun onButtonClicked(list: List) //
+    fun onButtonClicked(list: ListRoom) //
 }
