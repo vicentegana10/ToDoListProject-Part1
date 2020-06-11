@@ -7,6 +7,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,11 +15,13 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.example.todolistproject.ItemViewActivity.Companion.ITEM
 import com.example.todolistproject.ItemViewActivity.Companion.POS
 import com.example.todolistproject.adapters.OnUnCompleteItemClickListener
 import com.example.todolistproject.adapters.UncompleteItemsAdapter
 import com.example.todolistproject.classes.Item
+import com.example.todolistproject.model.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_list.*
 import java.text.SimpleDateFormat
@@ -36,36 +39,45 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     private lateinit var linearLayoutManager3: LinearLayoutManager
     private lateinit var adapter3 : UncompleteItemsAdapter
     var itemsCreatedCounter = 1 //Cantidad de Items
-    var current_list: List?= null//Lista que se esta mostrando
+    var current_list: ListRoom?= null//Lista que se esta mostrando
     lateinit var itemLayout: ConstraintLayout
     var expand:Boolean = false
+    var list_id:Int?= null
+
+    lateinit var database_list: ListRoomDao
+    lateinit var database_item: ItemRoomDao
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
+        database_list = Room.databaseBuilder(this, Database::class.java,"list").allowMainThreadQueries().build().listRoomDao()
+        database_item = Room.databaseBuilder(this, Database::class.java,"list").allowMainThreadQueries().build().itemRoomDao()
+
+
         itemLayout = activity_content_items
 
         //Lista que llega de la activity anterior ----------
-        var list: List = intent.getParcelableExtra(LIST)!!
+        list_id = intent.getStringExtra(LIST).toInt()
+        var list: ListRoom = database_list.getList(list_id!!)
         textViewListName.text = list.name
         current_list = list
         //--------------------------------------------------
 
         //Recycler View UnCompletedItems----------------------------------
-        linearLayoutManager2 = LinearLayoutManager(this)
+        /*linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2
         adapter2 = UncompleteItemsAdapter(current_list!!.list_items_uncompleted,this)
         recyclerViewUncompleted.adapter = adapter2
-        itemsCreatedCounter=list.list_items_uncompleted.size+1
+        itemsCreatedCounter=list.list_items_uncompleted.size+1*/
         //----------------------------------------------------------------
 
         //Recycler View CompletedItems---------------------------------------------
-        linearLayoutManager3 = LinearLayoutManager(this)
+        /*linearLayoutManager3 = LinearLayoutManager(this)
         recyclerViewCompleted.layoutManager = linearLayoutManager3
         adapter3 = UncompleteItemsAdapter(current_list!!.list_items_completed,this)
-        recyclerViewCompleted.adapter = adapter3
+        recyclerViewCompleted.adapter = adapter3*/
         //--------------------------------------------------------------------------
 
         //Se devulve a la vista anterior
@@ -165,11 +177,11 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     //Se agrega un item a la lista
     fun onAddItemToListButtonClick(view: View){
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
-        val fechaDeCreacion: String = simpleDateFormat.format(Date())
-        var newItem = Item(false, "Item  $itemsCreatedCounter",false,fechaDeCreacion,fechaDeCreacion,"")
+        val due_date: String = simpleDateFormat.format(Date())
+        var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",itemsCreatedCounter,list_id!!,false,false,due_date,"")
         itemsCreatedCounter++
-        current_list?.list_items_uncompleted!!.add(newItem)
-        adapter2.notifyItemInserted(current_list!!.list_items_uncompleted.size )
+        //current_list?.list_items_uncompleted!!.add(newItem)
+        //adapter2.notifyItemInserted(current_list!!.list_items_uncompleted.size )*/
     }
 
 
@@ -201,7 +213,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
     //Se va al vista del item cuando se da click en uno de estos
     override fun onItemClicked(item: Item,position: Int) {
-        val intent = Intent(this, ItemViewActivity::class.java)
+        /*val intent = Intent(this, ItemViewActivity::class.java)
         if(item.boolCompleted){
             intent.putExtra(ITEM,current_list!!.list_items_completed[position])
             intent.putExtra(POS,position.toString())
@@ -211,12 +223,12 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             intent.putExtra(ITEM,current_list!!.list_items_uncompleted[position])
             intent.putExtra(POS,position.toString())
             startActivityForResult(intent,2)
-        }
+        }*/
     }
 
     //Funcion que cambia el estado del item de completado a no completado
     override fun changeStateItem(item: Item, position: Int) {
-        if(item.boolCompleted){
+        /*if(item.boolCompleted){
             item.boolCompleted = false
             adapter3.deleteItem(position)
             adapter3.notifyItemRemoved(position)
@@ -229,10 +241,10 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             adapter2.notifyItemRemoved(position)
             current_list?.list_items_completed!!.add(item)
             adapter3.notifyItemInserted(current_list?.list_items_completed!!.size)
-        }
+        }*/
     }
 
-    //Respuesta de la Item Activity
+    /*//Respuesta de la Item Activity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 2) {
@@ -252,12 +264,12 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
             }
         }
-    }
+    }*/
 
-    override fun onResume() {
+    /*override fun onResume() {
         super.onResume()
         adapter2.notifyDataSetChanged()
         adapter3.notifyDataSetChanged()
-    }
+    }*/
 
 }

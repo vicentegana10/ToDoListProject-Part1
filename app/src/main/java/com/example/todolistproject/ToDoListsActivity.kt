@@ -32,9 +32,16 @@ import com.example.todolistproject.adapters.OnButtonClickListener
 import com.example.todolistproject.adapters.OnItemClickListener
 import com.example.todolistproject.classes.Item
 import com.example.todolistproject.model.*
+import com.example.todolistproject.networking.ApiService
+import com.example.todolistproject.networking.ListApi
+import com.example.todolistproject.networking.UserApi
+import com.example.todolistproject.utils.TOKEN
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_to_do_lists.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListListener,OnButtonClickListener, dialogList2Listener {
@@ -160,16 +167,18 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
                     var updateList = userToDoList[counter+1]
                     updateList.position=counter
+                    database_list.insertList(updateList)
                     userToDoList.set(counter+1, updateList)
                     recyclerViewLists.adapter?.notifyItemChanged(counter+1)
                     counter++
                 }
                 listsCreatedCounter-=1
                 // index de todos hacia abajo cambiados
-
                 val list = ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).getList(position)
                 ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).deleteList(viewHolder.adapterPosition)
                 recyclerViewLists.adapter?.notifyItemRemoved(position)
+                database_list.deleteList(list)
+                Log.d("ELIMINA",database_list.getAllListOrdered().toString())
                 val snackbar = Snackbar.make(listLayout,"Eliminaste una Lista",Snackbar.LENGTH_LONG)
                 snackbar.setAction("Deshacer") {
                     ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).restoreList(position,list)
@@ -208,10 +217,10 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
     //Se abre el detalle de la lista
     override fun onItemClicked(list: ListRoom) {
-        Log.d("La listaaaa",database_list.getList(list.id!!).toString())
-        /*val intent2 = Intent(this, ListActivity::class.java)
-        intent2.putExtra(LIST,userToDoList[list.position]) // se pasa el primer nombre no el del item apretado :/
-        startActivityForResult(intent2,1)*/
+        Log.d("LISTA SEND",list.toString())
+        val intent2 = Intent(this, ListActivity::class.java)
+        intent2.putExtra(LIST,list.id.toString()) // se pasa el primer nombre no el del item apretado :/
+        startActivity(intent2)
     }
 
     //Se abre el menu aplicacion
@@ -235,10 +244,13 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         /*var list_items_uncompleted = ArrayList<Item>()
         var list_items_completed = ArrayList<Item>()
         userToDoList.add(List(nameList,listsCreatedCounter,list_items_uncompleted,list_items_completed))*/
+        var list = ListRoom(null,nameList,listsCreatedCounter)
         AsyncTask.execute{
-            var list = ListRoom(null,nameList,listsCreatedCounter-1)
             database_list.insertList(list)
-            userToDoList.add(list)
+            var add_list = database_list.getLastList()
+            userToDoList.add(add_list)
+            Log.d("UPDATE",database_list.getAllListOrdered().toString())
+            //postListApi(add_list)
         }
         listsCreatedCounter++
         recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
@@ -309,6 +321,30 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     }
 
      */
+    fun postListApi(list: ListRoom){
+        val request = ApiService.buildService(ListApi::class.java)
+        val call = request.postList(TOKEN,list)
+        call.enqueue(object : Callback<ListRoom> {
+            override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
+                Log.d("RESPONSE",response.toString())
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(response.message() == "OK"){
+                            Toast.makeText(this@ToDoListsActivity, "Datos Actualizados", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                else{
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ListRoom>, t: Throwable) {
+                Toast.makeText(this@ToDoListsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
 
 }
 

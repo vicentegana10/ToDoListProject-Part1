@@ -18,8 +18,12 @@ interface ListRoomDao {
     // ESTA ACTUALIZA UN USERROOM DE LA BBDD QUE SE PASA COMO PARAMETRO
     @Update
     fun updateList(list: ListRoom)
+    @Delete
+    fun deleteList(list: ListRoom)
     @Query("SELECT * FROM ${TABLE_NAME} WHERE ${ID} = :id")
     fun getList(id:Int): ListRoom
+    @Query("SELECT * FROM ${TABLE_NAME} ORDER BY ${ID} DESC LIMIT 1")
+    fun getLastList(): ListRoom
     @Query("SELECT * FROM ${TABLE_NAME}")
     fun getAllList(): List<ListRoom>
     @Query("SELECT * FROM ${TABLE_NAME} ORDER BY ${POSITION} ASC")
