@@ -69,6 +69,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         current_list = list
         //--------------------------------------------------
         var items_uncompleted = database_item.getItems(list_id!!,false)
+        Log.d("LISTA COMPLET", list_items_completed.toString())
         if(items_uncompleted!= null){
             var cont = 0
             items_uncompleted.forEach(){
@@ -79,7 +80,8 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         }
 
         var items_completed = database_item.getItems(list_id!!,true)
-        if(items_uncompleted!= null){
+        Log.d("LISTA NO COMPLET", list_items_uncompleted.toString())
+        if(items_completed!= null){
             items_uncompleted.forEach(){
                 list_items_completed.add(it)
             }
@@ -200,16 +202,10 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val due_date: String = simpleDateFormat.format(Date())
         var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",itemsCreatedCounter-1,list_id!!,false,false,due_date,"")
-        AsyncTask.execute{
-            database_item.insertItem(newItem)
-            var add_item = database_item.getLastItem()
-            list_items_uncompleted.add(add_item)
-            Log.d("UPDATE ITEM",database_item.getItems(list_id!!,false).toString())
-            Log.d("UPDATE ITEM LISTA",list_items_uncompleted.toString())
-            //postListApi(add_list)
-        }
+        database_item.insertItem(newItem)
+        var add_item  = database_item.getLastItem()
+        list_items_uncompleted.add(add_item)
         itemsCreatedCounter++
-        //current_list?.list_items_uncompleted!!.add(newItem)
         adapter2.notifyItemInserted(list_items_uncompleted.size )
     }
 
@@ -246,16 +242,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         Log.d("Item",item.toString())
         intent.putExtra("ITEM",item.id.toString())
         startActivity(intent)
-        /*if(item.boolCompleted){
-            intent.putExtra(ITEM,current_list!!.list_items_completed[position])
-            intent.putExtra(POS,position.toString())
-            startActivityForResult(intent,2)
-        }
-        else{
-            intent.putExtra(ITEM,current_list!!.list_items_uncompleted[position])
-            intent.putExtra(POS,position.toString())
-            startActivityForResult(intent,2)
-        }*/
     }
 
     //Funcion que cambia el estado del item de completado a no completado

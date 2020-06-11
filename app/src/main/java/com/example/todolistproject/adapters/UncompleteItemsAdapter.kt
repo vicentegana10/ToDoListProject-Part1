@@ -2,6 +2,7 @@ package com.example.todolistproject.adapters
 
 import Dialogs.DialogChangeItemName
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -41,6 +42,7 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<ItemRoom>,val itemC
     override fun getItemCount(): Int = itemList.size
 
     override fun onBindViewHolder(holder: ItemCard, position: Int) {
+        Log.d("POSi",itemList.toString())
         val itemList = itemList[position]
         holder.bindItemList(itemList,itemClickListener)
     }
