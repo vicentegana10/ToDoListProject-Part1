@@ -10,12 +10,13 @@ import com.example.todolistproject.List
 import com.example.todolistproject.R
 import com.example.todolistproject.ToDoListsActivity
 import com.example.todolistproject.classes.Item
+import com.example.todolistproject.model.ItemRoom
 import kotlinx.android.synthetic.main.recyclerview_item_row.view.*
 
 
-class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClickListener: OnUnCompleteItemClickListener) : RecyclerView.Adapter<UncompleteItemsAdapter.ItemCard>() {
+class UncompleteItemsAdapter(private val itemList: ArrayList<ItemRoom>,val itemClickListener: OnUnCompleteItemClickListener) : RecyclerView.Adapter<UncompleteItemsAdapter.ItemCard>() {
 
-    fun getItem(position: Int): Item {
+    fun getItem(position: Int): ItemRoom {
         return itemList[position]
     }
 
@@ -23,7 +24,7 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClick
         itemList.removeAt(position)
     }
 
-    fun restoreItem(position: Int, item: Item){
+    fun restoreItem(position: Int, item: ItemRoom){
         itemList.add(position,item)
     }
 
@@ -46,18 +47,18 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClick
 
     class ItemCard(v: View) : RecyclerView.ViewHolder(v){
         private var view: View = v
-        private var itemList: Item? = null
+        private var itemList: ItemRoom? = null
 
 
-        fun bindItemList(itemList: Item,clickListener: OnUnCompleteItemClickListener) {
+        fun bindItemList(itemList: ItemRoom,clickListener: OnUnCompleteItemClickListener) {
             this.itemList = itemList
             view.textViewItemName.text = itemList.name
-            if (itemList.boolPriority==false){
+            if (itemList.starred==false){
                 view.imageViewStar.setVisibility(View.INVISIBLE)
             }
             else{view.imageViewStar.setVisibility(View.VISIBLE)}
 
-            if(itemList.boolCompleted){
+            if(itemList.done){
                 view.imageViewItemDone.setImageResource(R.drawable.ic_done_green_24dp)
             }
 
@@ -75,6 +76,6 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<Item>,val itemClick
 }
 
 interface OnUnCompleteItemClickListener{
-    fun onItemClicked(item: Item, position: Int)
-    fun changeStateItem(item: Item, position: Int)
+    fun onItemClicked(item: ItemRoom, position: Int)
+    fun changeStateItem(item: ItemRoom, position: Int)
 }

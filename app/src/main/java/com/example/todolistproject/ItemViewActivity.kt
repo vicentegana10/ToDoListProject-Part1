@@ -6,12 +6,17 @@ import Dialogs.dialogChangeItemNameListener
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.room.Room
 import com.example.todolistproject.classes.Item
+import com.example.todolistproject.model.Database
+import com.example.todolistproject.model.ItemRoom
+import com.example.todolistproject.model.ItemRoomDao
 import kotlinx.android.synthetic.main.activity_item_view.*
 import kotlinx.android.synthetic.main.activity_list.*
 import java.text.SimpleDateFormat
@@ -25,27 +30,30 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         var POS = "POS"
     }
 
-    var item: Item ?= null
+    var item: ItemRoom?= null
     var edit: Boolean ?= null //Bool qu indica la prioridad
-    var position: String ?= null //Posicion del item
+    lateinit var database_item: ItemRoomDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_item_view)
-        //Recive el item actual
-        item = intent.getParcelableExtra(ITEM)!!
-        position = intent.getStringExtra(POS)!!
+
+        database_item = Room.databaseBuilder(this, Database::class.java,"item").allowMainThreadQueries().build().itemRoomDao()
+
+        //Recibe el item actual
+        var item_id = intent.getStringExtra(ITEM).toInt()
+        item = database_item.getItem(item_id)
 
         textViewItemName.text = item?.name
-        textViewCreatedDate.text = "Creado el " + item?.fechaDeCreacion
-        textViewDate.text = item?.fechaPlazo
-        edit = item?.boolPriority
+        textViewCreatedDate.text = "Creado el " + item?.due_date
+        textViewDate.text = item?.due_date
+        edit = item?.starred
 
-        if (item!!.nota != ""){
-            textView5.setText(item!!.nota)
+        if (item!!.notes != ""){
+            textView5.setText(item!!.notes)
         }
 
-        if(item!!.boolCompleted){
+        if(item!!.done){
             buttonCompleteItem.text="Completado"
         }
         else{buttonCompleteItem.text="En progreso"}
@@ -84,7 +92,10 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
             val format_date = "dd-MM-yyyy"
             val sdf = SimpleDateFormat(format_date, Locale.US)
             textViewDate.text = sdf.format(cal.time)
-            item?.fechaPlazo = sdf.format(cal.time)
+            item!!.due_date = sdf.format(cal.time)
+            AsyncTask.execute{
+                database_item.insertItem(item!!)
+            }
         }
 
         DatePickerDialog(this, dateSetListener,
@@ -97,35 +108,43 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
     fun EditPriority() {
         if (edit!!) {
             imageViewStar.setImageResource(R.drawable.ic_star_border_black_24dp)
-            item?.boolPriority = false
+            item?.starred = false
+            AsyncTask.execute{
+                database_item.insertItem(item!!)
+            }
         } else {
             imageViewStar.setImageResource(R.drawable.ic_star_yellow_24dp)
-            item?.boolPriority = true
+            item?.starred = true
+            AsyncTask.execute{
+                database_item.insertItem(item!!)
+            }
         }
         edit = !edit!!
     }
 
     fun EditCompleted(){
-        if (item?.boolCompleted == true){
-            item?.boolCompleted = false
+        if (item?.done == true){
+            item?.done = false
             buttonCompleteItem.text="Completar"
             Toast.makeText(applicationContext,"Ahora el item esta en progreso", Toast.LENGTH_LONG).show()
         }
         else{
-            item?.boolCompleted = true
+            item?.done = true
             buttonCompleteItem.text="En progreso"
             Toast.makeText(applicationContext,"Ahora el item esta completado", Toast.LENGTH_LONG).show()
         }
     }
     //Se guarda la nota editada
     fun SaveNote(){
-        item?.nota  = textView5.text.toString()
+        item?.notes  = textView5.text.toString()
+        AsyncTask.execute{
+            database_item.insertItem(item!!)
+        }
     }
 
     override fun onBackPressed() {
         val data = Intent().apply {
             putExtra(ITEM,item)
-            putExtra(POS,position)
         }
         setResult(Activity.RESULT_OK,data)
         finish()
@@ -139,6 +158,9 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
     //Se edita el nombre
     override fun changeItemName(nameItem: String){
         item?.name = nameItem
+        AsyncTask.execute{
+            database_item.insertItem(item!!)
+        }
         textViewItemName.text = item?.name
     }
     override fun onPause(){

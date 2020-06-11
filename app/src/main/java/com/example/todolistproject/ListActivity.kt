@@ -6,6 +6,7 @@ package com.example.todolistproject
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -38,11 +39,14 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     private lateinit var adapter2 : UncompleteItemsAdapter
     private lateinit var linearLayoutManager3: LinearLayoutManager
     private lateinit var adapter3 : UncompleteItemsAdapter
-    var itemsCreatedCounter = 1 //Cantidad de Items
+    var itemsCreatedCounter = 0 //Cantidad de Items
     var current_list: ListRoom?= null//Lista que se esta mostrando
     lateinit var itemLayout: ConstraintLayout
     var expand:Boolean = false
     var list_id:Int?= null
+
+    var list_items_uncompleted =  ArrayList<ItemRoom>()
+    var list_items_completed =  ArrayList<ItemRoom>()
 
     lateinit var database_list: ListRoomDao
     lateinit var database_item: ItemRoomDao
@@ -53,7 +57,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         setContentView(R.layout.activity_list)
 
         database_list = Room.databaseBuilder(this, Database::class.java,"list").allowMainThreadQueries().build().listRoomDao()
-        database_item = Room.databaseBuilder(this, Database::class.java,"list").allowMainThreadQueries().build().itemRoomDao()
+        database_item = Room.databaseBuilder(this, Database::class.java,"item").allowMainThreadQueries().build().itemRoomDao()
 
 
         itemLayout = activity_content_items
@@ -64,20 +68,37 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         textViewListName.text = list.name
         current_list = list
         //--------------------------------------------------
+        var items_uncompleted = database_item.getItems(list_id!!,false)
+        if(items_uncompleted!= null){
+            var cont = 0
+            items_uncompleted.forEach(){
+                list_items_uncompleted.add(it)
+                cont++
+            }
+            itemsCreatedCounter = cont
+        }
+
+        var items_completed = database_item.getItems(list_id!!,true)
+        if(items_uncompleted!= null){
+            items_uncompleted.forEach(){
+                list_items_completed.add(it)
+            }
+        }
+
 
         //Recycler View UnCompletedItems----------------------------------
-        /*linearLayoutManager2 = LinearLayoutManager(this)
+        linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2
-        adapter2 = UncompleteItemsAdapter(current_list!!.list_items_uncompleted,this)
+        adapter2 = UncompleteItemsAdapter(list_items_uncompleted,this)
         recyclerViewUncompleted.adapter = adapter2
-        itemsCreatedCounter=list.list_items_uncompleted.size+1*/
+        itemsCreatedCounter= list_items_uncompleted.size+1
         //----------------------------------------------------------------
 
         //Recycler View CompletedItems---------------------------------------------
-        /*linearLayoutManager3 = LinearLayoutManager(this)
+        linearLayoutManager3 = LinearLayoutManager(this)
         recyclerViewCompleted.layoutManager = linearLayoutManager3
-        adapter3 = UncompleteItemsAdapter(current_list!!.list_items_completed,this)
-        recyclerViewCompleted.adapter = adapter3*/
+        adapter3 = UncompleteItemsAdapter(list_items_completed,this)
+        recyclerViewCompleted.adapter = adapter3
         //--------------------------------------------------------------------------
 
         //Se devulve a la vista anterior
@@ -178,10 +199,18 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     fun onAddItemToListButtonClick(view: View){
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val due_date: String = simpleDateFormat.format(Date())
-        var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",itemsCreatedCounter,list_id!!,false,false,due_date,"")
+        var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",itemsCreatedCounter-1,list_id!!,false,false,due_date,"")
+        AsyncTask.execute{
+            database_item.insertItem(newItem)
+            var add_item = database_item.getLastItem()
+            list_items_uncompleted.add(add_item)
+            Log.d("UPDATE ITEM",database_item.getItems(list_id!!,false).toString())
+            Log.d("UPDATE ITEM LISTA",list_items_uncompleted.toString())
+            //postListApi(add_list)
+        }
         itemsCreatedCounter++
         //current_list?.list_items_uncompleted!!.add(newItem)
-        //adapter2.notifyItemInserted(current_list!!.list_items_uncompleted.size )*/
+        adapter2.notifyItemInserted(list_items_uncompleted.size )
     }
 
 
@@ -212,9 +241,12 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     }
 
     //Se va al vista del item cuando se da click en uno de estos
-    override fun onItemClicked(item: Item,position: Int) {
-        /*val intent = Intent(this, ItemViewActivity::class.java)
-        if(item.boolCompleted){
+    override fun onItemClicked(item: ItemRoom,position: Int) {
+        val intent = Intent(this, ItemViewActivity::class.java)
+        Log.d("Item",item.toString())
+        intent.putExtra("ITEM",item.id.toString())
+        startActivity(intent)
+        /*if(item.boolCompleted){
             intent.putExtra(ITEM,current_list!!.list_items_completed[position])
             intent.putExtra(POS,position.toString())
             startActivityForResult(intent,2)
@@ -227,21 +259,27 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     }
 
     //Funcion que cambia el estado del item de completado a no completado
-    override fun changeStateItem(item: Item, position: Int) {
-        /*if(item.boolCompleted){
-            item.boolCompleted = false
+    override fun changeStateItem(item: ItemRoom, position: Int) {
+        if(item.done){
+            item.done = false
             adapter3.deleteItem(position)
             adapter3.notifyItemRemoved(position)
-            current_list?.list_items_uncompleted!!.add(item)
-            adapter2.notifyItemInserted(current_list?.list_items_uncompleted!!.size)
+            list_items_uncompleted.add(item)
+            AsyncTask.execute{
+                database_item.insertItem(item)
+            }
+            adapter2.notifyItemInserted(list_items_uncompleted.size)
         }
         else{
-            item.boolCompleted = true
+            item.done = true
             adapter2.deleteItem(position)
             adapter2.notifyItemRemoved(position)
-            current_list?.list_items_completed!!.add(item)
-            adapter3.notifyItemInserted(current_list?.list_items_completed!!.size)
-        }*/
+            list_items_completed.add(item)
+            AsyncTask.execute{
+                database_item.insertItem(item)
+            }
+            adapter3.notifyItemInserted(list_items_completed.size)
+        }
     }
 
     /*//Respuesta de la Item Activity
@@ -266,10 +304,10 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         }
     }*/
 
-    /*override fun onResume() {
+    override fun onResume() {
         super.onResume()
         adapter2.notifyDataSetChanged()
         adapter3.notifyDataSetChanged()
-    }*/
+    }
 
 }

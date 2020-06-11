@@ -321,6 +321,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     }
 
      */
+    //Funcion que hace POST en la lista
     fun postListApi(list: ListRoom){
         val request = ApiService.buildService(ListApi::class.java)
         val call = request.postList(TOKEN,list)

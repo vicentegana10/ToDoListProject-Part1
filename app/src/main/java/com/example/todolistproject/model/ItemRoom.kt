@@ -2,14 +2,31 @@ package com.example.todolistproject.model
 
 import android.os.Parcelable
 import androidx.room.*
+import com.example.todolistproject.model.ItemRoom.Companion.DONE
 import com.example.todolistproject.model.ItemRoom.Companion.ID
+import com.example.todolistproject.model.ItemRoom.Companion.LIST_ID
 import com.example.todolistproject.model.ItemRoom.Companion.POSITION
 import com.example.todolistproject.model.ItemRoom.Companion.TABLE_NAME
 import kotlinx.android.parcel.Parcelize
 
 @Dao
 interface ItemRoomDao {
-
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertItem(item: ItemRoom)
+    @Update
+    fun updateItem(item: ItemRoom)
+    @Delete
+    fun deleteItem(item: ItemRoom)
+    @Query("SELECT * FROM ${TABLE_NAME} WHERE ${ID} = :id")
+    fun getItem(id:Int): ItemRoom
+    @Query("SELECT * FROM ${TABLE_NAME} ORDER BY ${ID} DESC LIMIT 1")
+    fun getLastItem(): ItemRoom
+    @Query("SELECT * FROM ${TABLE_NAME} WHERE ${LIST_ID} = :list_id AND ${DONE} = :done ORDER BY ${POSITION} ASC")
+    fun getItems(list_id:Int, done:Boolean): List<ItemRoom>
+    @Query("SELECT * FROM ${TABLE_NAME}")
+    fun getAllItems(): List<ItemRoom>
+    @Query("SELECT * FROM ${TABLE_NAME} WHERE ${LIST_ID} = :list_id ORDER BY ${POSITION} ASC")
+    fun getAllItemsOrdered(list_id: Int): List<ItemRoom>
 }
 
 @Parcelize
