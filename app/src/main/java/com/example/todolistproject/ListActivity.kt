@@ -69,7 +69,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         current_list = list
         //--------------------------------------------------
         var items_uncompleted = database_item.getItems(list_id!!,false)
-        Log.d("LISTA COMPLET", list_items_completed.toString())
         if(items_uncompleted!= null){
             var cont = 0
             items_uncompleted.forEach(){
@@ -80,9 +79,8 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         }
 
         var items_completed = database_item.getItems(list_id!!,true)
-        Log.d("LISTA NO COMPLET", list_items_uncompleted.toString())
         if(items_completed!= null){
-            items_uncompleted.forEach(){
+            items_completed.forEach(){
                 list_items_completed.add(it)
             }
         }
@@ -196,10 +194,12 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 adapter3.changeListPosition(iniPosition,finPosition)
                 adapter3.notifyItemMoved(iniPosition,finPosition)
 
-                //Se actualiza la posicion de los items completados en la BBDD
+                //Se actualiza la posicion de los items no completados en la BBDD
                 list_items_completed.forEach{
                     database_item.insertItem(it)
                 }
+
+                Log.d("Nuevas POS",database_item.getAllItemsOrdered(list_id!!).toString())
                 return true
             }
 
@@ -276,20 +276,18 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             item.done = false
             adapter3.deleteItem(position)
             adapter3.notifyItemRemoved(position)
+            item.position = list_items_uncompleted.size
             list_items_uncompleted.add(item)
-            AsyncTask.execute{
-                database_item.insertItem(item)
-            }
+            database_item.insertItem(item)
             adapter2.notifyItemInserted(list_items_uncompleted.size)
         }
         else{
             item.done = true
             adapter2.deleteItem(position)
             adapter2.notifyItemRemoved(position)
+            item.position = list_items_completed.size
             list_items_completed.add(item)
-            AsyncTask.execute{
-                database_item.insertItem(item)
-            }
+            database_item.insertItem(item)
             adapter3.notifyItemInserted(list_items_completed.size)
         }
     }
