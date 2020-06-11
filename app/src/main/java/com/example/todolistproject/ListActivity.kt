@@ -132,8 +132,21 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             ): Boolean {
                 val iniPosition = viewHolder.adapterPosition
                 val finPosition = target.adapterPosition
+                val updateList = list_items_uncompleted.get(iniPosition)
+                val updateList2 = list_items_uncompleted.get(finPosition)
+                updateList.position = finPosition
+                updateList2.position = iniPosition
+                list_items_uncompleted.set(iniPosition, updateList)
+                adapter2.notifyItemChanged(iniPosition)
+                list_items_uncompleted.set(finPosition, updateList2)
+                adapter2.notifyItemChanged(finPosition)
                 adapter2.changeListPosition(iniPosition,finPosition)
                 adapter2.notifyItemMoved(iniPosition,finPosition)
+
+                //Se actualiza la posicion de los items no completados en la BBDD
+                list_items_uncompleted.forEach{
+                    database_item.insertItem(it)
+                }
                 return true
             }
 
@@ -172,8 +185,21 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             ): Boolean {
                 val iniPosition = viewHolder.adapterPosition
                 val finPosition = target.adapterPosition
+                val updateList = list_items_completed.get(iniPosition)
+                val updateList2 = list_items_completed.get(finPosition)
+                updateList.position = finPosition
+                updateList2.position = iniPosition
+                list_items_completed.set(iniPosition, updateList)
+                adapter3.notifyItemChanged(iniPosition)
+                list_items_completed.set(finPosition, updateList2)
+                adapter3.notifyItemChanged(finPosition)
                 adapter3.changeListPosition(iniPosition,finPosition)
                 adapter3.notifyItemMoved(iniPosition,finPosition)
+
+                //Se actualiza la posicion de los items completados en la BBDD
+                list_items_completed.forEach{
+                    database_item.insertItem(it)
+                }
                 return true
             }
 
