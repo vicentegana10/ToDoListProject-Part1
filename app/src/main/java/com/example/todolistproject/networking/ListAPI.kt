@@ -11,8 +11,25 @@ interface ListApi {
                 @Body()listRoom: ListRoom
     ): Call<ListRoom>
 
-    @PUT("users/update_self")
-    fun updateUser(@Header("token") token: String?,
-                   @Body()userRoom: UserRoom
+    @PUT("lists/:{list_id}")
+    fun updateListApi(@Header("token") token: String?,
+                   @Path("list_id") list_id: Int?,
+                   @Body()listRoom: ListRoom
     ): Call<ListRoom>
+
+    @GET("lists/")
+    fun getListsApi(@Header("token") token: String?): Call<ListRoom>
+
+    @GET("lists/:{list_id}")
+    fun getListApi(@Header("token") token: String?,
+                @Path("list_id") list_id: Int?
+    ): Call<ListRoom>
+
+    @DELETE("lists/:{list_id}")
+    fun deleteListApi(@Header("token") token: String?,
+                @Path("list_id") list_id: Int?
+    ): Call<ListRoom>
+
+
+
 }

@@ -45,7 +45,5 @@ data class ListRoom(
         const val ID = "id"
         const val NAME = "name"
         const val POSITION = "position"
-        const val ITEMS_U = "it_uncompleted"
-        const val ITEMS_C = "it_completed"
     }
 }
