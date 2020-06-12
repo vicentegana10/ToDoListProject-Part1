@@ -150,15 +150,29 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val posicion = viewHolder.adapterPosition
+                var counter = viewHolder.adapterPosition
+                while (counter+1<list_items_uncompleted.size){
+
+                    var updateItem = list_items_uncompleted[counter+1]
+                    updateItem.position=counter
+                    database_item.insertItem(updateItem)
+                    list_items_uncompleted.set(counter+1, updateItem)
+                    adapter2.notifyItemChanged(counter+1)
+                    counter++
+                }
+                itemsCreatedCounter-=1
                 val item = adapter2.getItem(posicion)
                 adapter2.deleteItem(posicion)
                 adapter2.notifyItemRemoved(posicion)
+                database_item.deleteItem(item)
+                Log.d("ELIMINAR",item.toString())
+                Log.d("DELETE",database_item.getAllItemsOrdered(list_id!!).toString())
                 val snackbar = Snackbar.make(itemLayout,"Eliminaste un item",Snackbar.LENGTH_LONG)
-                snackbar.setAction("Deshacer",{
+                /*snackbar.setAction("Deshacer",{
                     adapter2.restoreItem(posicion,item)
                     adapter2.notifyItemInserted(posicion)
                 })
-                snackbar.setActionTextColor(Color.BLUE)
+                snackbar.setActionTextColor(Color.BLUE)*/
                 snackbar.show()
             }
 
@@ -198,22 +212,35 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 list_items_completed.forEach{
                     database_item.insertItem(it)
                 }
-
-                Log.d("Nuevas POS",database_item.getAllItemsOrdered(list_id!!).toString())
                 return true
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val posicion = viewHolder.adapterPosition
+                var counter = viewHolder.adapterPosition
+                while (counter+1<list_items_completed.size){
+
+                    var updateItem = list_items_completed[counter+1]
+                    updateItem.position=counter
+                    database_item.insertItem(updateItem)
+                    list_items_completed.set(counter+1, updateItem)
+                    adapter3.notifyItemChanged(counter+1)
+                    counter++
+                }
+                itemsCreatedCounter-=1
+
                 val item = adapter3.getItem(posicion)
                 adapter3.deleteItem(posicion)
                 adapter3.notifyItemRemoved(posicion)
+                database_item.deleteItem(item)
+                Log.d("ELIMINAR",item.toString())
+                Log.d("DELETE",database_item.getAllItemsOrdered(list_id!!).toString())
                 val snackbar = Snackbar.make(itemLayout,"Eliminaste un item",Snackbar.LENGTH_LONG)
-                snackbar.setAction("Deshacer",{
+                /*snackbar.setAction("Deshacer",{
                     adapter3.restoreItem(posicion,item)
                     adapter3.notifyItemInserted(posicion)
                 })
-                snackbar.setActionTextColor(Color.BLUE)
+                snackbar.setActionTextColor(Color.BLUE)*/
                 snackbar.show()
             }
 

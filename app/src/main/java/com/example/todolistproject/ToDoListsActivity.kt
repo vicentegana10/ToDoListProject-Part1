@@ -180,7 +180,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 database_list.deleteList(list)
                 Log.d("ELIMINA",database_list.getAllListOrdered().toString())
                 val snackbar = Snackbar.make(listLayout,"Eliminaste una Lista",Snackbar.LENGTH_LONG)
-                snackbar.setAction("Deshacer") {
+                /*snackbar.setAction("Deshacer") {
                     ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).restoreList(position,list)
                     recyclerViewLists.adapter?.notifyItemInserted(position)
                     // revertir lo hecho en modificar el atributo position de la lista
@@ -196,8 +196,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                     listsCreatedCounter+=1
 
 
-                }
-                snackbar.setActionTextColor(Color.BLUE)
+                }*/
+                //snackbar.setActionTextColor(Color.BLUE)
                 snackbar.show()
                 //userLog?.let { updateUserRoom(it) }
             }
