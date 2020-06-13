@@ -17,8 +17,14 @@ import com.example.todolistproject.classes.Item
 import com.example.todolistproject.model.Database
 import com.example.todolistproject.model.ItemRoom
 import com.example.todolistproject.model.ItemRoomDao
+import com.example.todolistproject.networking.ApiService
+import com.example.todolistproject.networking.ItemApi
+import com.example.todolistproject.utils.TOKEN
 import kotlinx.android.synthetic.main.activity_item_view.*
 import kotlinx.android.synthetic.main.activity_list.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -96,6 +102,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
             AsyncTask.execute{
                 database_item.insertItem(item!!)
             }
+            updateItemApi(item!!)
         }
 
         DatePickerDialog(this, dateSetListener,
@@ -112,12 +119,14 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
             AsyncTask.execute{
                 database_item.insertItem(item!!)
             }
+            updateItemApi(item!!)
         } else {
             imageViewStar.setImageResource(R.drawable.ic_star_yellow_24dp)
             item?.starred = true
             AsyncTask.execute{
                 database_item.insertItem(item!!)
             }
+            updateItemApi(item!!)
         }
         edit = !edit!!
     }
@@ -140,6 +149,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         AsyncTask.execute{
             database_item.insertItem(item!!)
         }
+        updateItemApi(item!!)
     }
 
     override fun onBackPressed() {
@@ -161,9 +171,40 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         AsyncTask.execute{
             database_item.insertItem(item!!)
         }
+        updateItemApi(item!!)
         textViewItemName.text = item?.name
     }
     override fun onPause(){
         super.onPause()
     }
+
+    fun updateItemApi(item: ItemRoom){
+        val request = ApiService.buildService(ItemApi::class.java)
+        val call = request.updateItemApi(TOKEN,item.id,item)
+        call.enqueue(object : Callback<ItemRoom> {
+            override fun onResponse(call: Call<ItemRoom>, response: Response<ItemRoom>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(response.message() == "OK"){
+                            Log.d("RESPONSE ITEM UPD", response.body().toString())
+                            Toast.makeText(this@ItemViewActivity, "Datos Actualizados", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                else{
+                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
+                    Toast.makeText(this@ItemViewActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ItemRoom>, t: Throwable) {
+                Log.d("HOLAAAAAAAAA","NO recibe respuesta onfaliure")
+                //userToDoList.add(list)
+                //recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
+                Toast.makeText(this@ItemViewActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
 }

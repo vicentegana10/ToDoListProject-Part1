@@ -23,10 +23,20 @@ import com.example.todolistproject.adapters.OnUnCompleteItemClickListener
 import com.example.todolistproject.adapters.UncompleteItemsAdapter
 import com.example.todolistproject.classes.Item
 import com.example.todolistproject.model.*
+import com.example.todolistproject.networking.ApiService
+import com.example.todolistproject.networking.ItemApi
+import com.example.todolistproject.networking.ListApi
+import com.example.todolistproject.utils.TOKEN
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_list.*
+import kotlinx.android.synthetic.main.activity_to_do_lists.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.List
 
 
 class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
@@ -167,6 +177,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 database_item.deleteItem(item)
                 Log.d("ELIMINAR",item.toString())
                 Log.d("DELETE",database_item.getAllItemsOrdered(list_id!!).toString())
+                deleteItemApi(item)
                 val snackbar = Snackbar.make(itemLayout,"Eliminaste un item",Snackbar.LENGTH_LONG)
                 /*snackbar.setAction("Deshacer",{
                     adapter2.restoreItem(posicion,item)
@@ -233,8 +244,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 adapter3.deleteItem(posicion)
                 adapter3.notifyItemRemoved(posicion)
                 database_item.deleteItem(item)
-                Log.d("ELIMINAR",item.toString())
-                Log.d("DELETE",database_item.getAllItemsOrdered(list_id!!).toString())
+                deleteItemApi(item)
                 val snackbar = Snackbar.make(itemLayout,"Eliminaste un item",Snackbar.LENGTH_LONG)
                 /*snackbar.setAction("Deshacer",{
                     adapter3.restoreItem(posicion,item)
@@ -254,10 +264,16 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     fun onAddItemToListButtonClick(view: View){
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val due_date: String = simpleDateFormat.format(Date())
+        //Se crea el nuevo item
         var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",itemsCreatedCounter-1,list_id!!,false,false,due_date,"")
+        //Se agrega a la BBDD y a la lista
         database_item.insertItem(newItem)
         var add_item  = database_item.getLastItem()
-        list_items_uncompleted.add(add_item)
+        //Se introduce el item en la clase para enviarlo
+        var sendItem = ApiItem(listOf(add_item))
+        //Se envia a la Api
+        postItemApi(sendItem)
+        //Se aumenta el conteo y se actualiza el recycler view
         itemsCreatedCounter++
         adapter2.notifyItemInserted(list_items_uncompleted.size )
     }
@@ -306,6 +322,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             item.position = list_items_uncompleted.size
             list_items_uncompleted.add(item)
             database_item.insertItem(item)
+            updateItemApi(item)
             adapter2.notifyItemInserted(list_items_uncompleted.size)
         }
         else{
@@ -315,6 +332,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             item.position = list_items_completed.size
             list_items_completed.add(item)
             database_item.insertItem(item)
+            updateItemApi(item)
             adapter3.notifyItemInserted(list_items_completed.size)
         }
     }
@@ -346,5 +364,92 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         adapter2.notifyDataSetChanged()
         adapter3.notifyDataSetChanged()
     }
+
+    fun postItemApi(item: ApiItem){
+        val request = ApiService.buildService(ItemApi::class.java)
+        val call = request.postItemApi(TOKEN,item)
+        call.enqueue(object : Callback<List<ItemRoom>> {
+            override fun onResponse(call: Call<List<ItemRoom>>, response: Response<List<ItemRoom>>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(response.message() == "OK"){
+                            database_item.updateIdItem(response.body()!![0].id,item.items[0].id)
+                            var add_item  = database_item.getLastItem()
+                            list_items_uncompleted.add(add_item)
+                            adapter2.notifyItemInserted(list_items_uncompleted.size)
+                            Toast.makeText(this@ListActivity, "Datos Actualizados", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                else{
+                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
+                    Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<ItemRoom>>, t: Throwable) {
+                Log.d("HOLAAAAAAAAA","NO recibe respuesta onfaliure")
+                //userToDoList.add(list)
+                //recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
+                Toast.makeText(this@ListActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
+    fun updateItemApi(item: ItemRoom){
+        val request = ApiService.buildService(ItemApi::class.java)
+        val call = request.updateItemApi(TOKEN,item.id,item)
+        call.enqueue(object : Callback<ItemRoom> {
+            override fun onResponse(call: Call<ItemRoom>, response: Response<ItemRoom>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(response.message() == "OK"){
+                            Log.d("RESPONSE ITEM UPD", response.body().toString())
+                            Toast.makeText(this@ListActivity, "Datos Actualizados", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                else{
+                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
+                    Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ItemRoom>, t: Throwable) {
+                Log.d("HOLAAAAAAAAA","NO recibe respuesta onfaliure")
+                //userToDoList.add(list)
+                //recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
+                Toast.makeText(this@ListActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
+    fun deleteItemApi(item: ItemRoom){
+        val request = ApiService.buildService(ItemApi::class.java)
+        val call = request.deleteItemApi(TOKEN,item.id)
+        call.enqueue(object : Callback<ItemRoom> {
+            override fun onResponse(call: Call<ItemRoom>, response: Response<ItemRoom>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(response.message() == "No Content"){
+
+                        }
+                    }
+                }
+                else{
+                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
+                    Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ItemRoom>, t: Throwable) {
+                Toast.makeText(this@ListActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
 
 }

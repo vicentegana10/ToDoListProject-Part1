@@ -64,13 +64,16 @@ class MainActivity : AppCompatActivity() {
 
     //Al apretar ingresar, lleva a la vista de lista
     fun onLoginButtonClick(view: View) {
+        val intent = Intent(view.context, ToDoListsActivity::class.java)
         if(confirmResponse){
-            val intent = Intent(view.context, ToDoListsActivity::class.java)
             intent.putExtra(USER, user)
             startActivity(intent)
         }
         else{
-            Toast.makeText(view.context,"Esperando Respuesta", Toast.LENGTH_LONG).show()
+            var userDefault:UserRoom = UserRoom("sinconexion@gmail.com","name","last name", "+56989022776", "", "password")
+            intent.putExtra(USER, userDefault)
+            startActivity(intent)
+            Toast.makeText(view.context,"Usuario Default", Toast.LENGTH_LONG).show()
         }
     }
 

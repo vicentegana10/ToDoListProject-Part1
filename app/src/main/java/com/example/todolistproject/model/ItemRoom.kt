@@ -13,8 +13,8 @@ import kotlinx.android.parcel.Parcelize
 interface ItemRoomDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertItem(item: ItemRoom)
-    @Update
-    fun updateItem(item: ItemRoom)
+    @Query("UPDATE ${TABLE_NAME} SET ${ID} = :newId WHERE ${ID} = :oldId")
+    fun updateIdItem(newId: Int?, oldId: Int?)
     @Delete
     fun deleteItem(item: ItemRoom)
     @Query("SELECT * FROM ${TABLE_NAME} WHERE ${ID} = :id")

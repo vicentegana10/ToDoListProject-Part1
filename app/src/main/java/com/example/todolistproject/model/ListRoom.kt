@@ -16,8 +16,10 @@ interface ListRoomDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertList(list: ListRoom)
     // ESTA ACTUALIZA UN USERROOM DE LA BBDD QUE SE PASA COMO PARAMETRO
-    @Update
-    fun updateList(list: ListRoom)
+    /*@Update
+    fun updateList(list: ListRoom)*/
+    @Query("UPDATE ${TABLE_NAME} SET ${ID} = :newId WHERE ${ID} = :oldId")
+    fun updateIdList(newId: Int?, oldId: Int?)
     @Delete
     fun deleteList(list: ListRoom)
     @Query("SELECT * FROM ${TABLE_NAME} WHERE ${ID} = :id")
@@ -34,7 +36,7 @@ interface ListRoomDao {
 @Entity(tableName = TABLE_NAME)
 data class ListRoom(
     @PrimaryKey(autoGenerate = true)
-    val id: Int?,
+    var id: Int?,
     @ColumnInfo(name = NAME)
     var name: String,
     @ColumnInfo(name = POSITION)
@@ -47,3 +49,5 @@ data class ListRoom(
         const val POSITION = "position"
     }
 }
+
+data class ApiItem(var items: List<ItemRoom>)

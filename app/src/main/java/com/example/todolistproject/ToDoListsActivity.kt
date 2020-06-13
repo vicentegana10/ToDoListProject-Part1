@@ -11,8 +11,11 @@ import Dialogs.DialogList2
 import Dialogs.dialogList2Listener
 import Dialogs.dialogListListener
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Parcelable
@@ -82,6 +85,10 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
             database.insert(userToInsert)
         }
 
+        val cm = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting!!
+        Log.d("CONEXION",isConnected.toString())
         //Si hay listas en la BBDD, se agregan a userToDoList
         if(database_list.getAllList() != null){
             if(userToDoList != null){
@@ -177,6 +184,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 val list = ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).getList(position)
                 ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).deleteList(viewHolder.adapterPosition)
                 recyclerViewLists.adapter?.notifyItemRemoved(position)
+                deleteListApi(list)
                 database_list.deleteList(list)
                 Log.d("ELIMINA",database_list.getAllListOrdered().toString())
                 val snackbar = Snackbar.make(listLayout,"Eliminaste una Lista",Snackbar.LENGTH_LONG)
@@ -220,6 +228,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         Log.d("LISTA SEND",list.toString())
         val intent2 = Intent(this, ListActivity::class.java)
         intent2.putExtra(LIST,list.id.toString()) // se pasa el primer nombre no el del item apretado :/
+        Log.d("UPDATE desp",database_list.getAllListOrdered().toString())
         startActivity(intent2)
     }
 
@@ -241,20 +250,15 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
     //Se añade un lista a userToDoList
     override fun addList(nameList: String){
-        /*var list_items_uncompleted = ArrayList<Item>()
-        var list_items_completed = ArrayList<Item>()
-        userToDoList.add(List(nameList,listsCreatedCounter,list_items_uncompleted,list_items_completed))*/
         var list = ListRoom(null,nameList,listsCreatedCounter)
         AsyncTask.execute{
             database_list.insertList(list)
             var add_list = database_list.getLastList()
-            userToDoList.add(add_list)
-            Log.d("UPDATE",database_list.getAllListOrdered().toString())
-            //postListApi(add_list)
+            Log.d("UPDATE ant",database_list.getAllListOrdered().toString())
+            postListApi(add_list)
         }
-        listsCreatedCounter++
         recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
-
+        listsCreatedCounter++
     }
     //Cambia el nombre de la lista
     override fun changeName(nameList: String,indexRec : Int){
@@ -264,6 +268,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         userToDoList.set(updateList.position,updateList)
         //Se realiza update en la base de datos
         database_list.insertList(updateList)
+        putListApi(updateList)
         recyclerViewLists.adapter?.notifyItemChanged(updateList.position)
 
         //userLog?.let { updateUserRoom(it) }
@@ -327,15 +332,77 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         val call = request.postList(TOKEN,list)
         call.enqueue(object : Callback<ListRoom> {
             override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
-                Log.d("RESPONSE",response.toString())
+                Log.d("RESPONSE",response.body().toString())
                 if (response.isSuccessful) {
                     if (response.body() != null) {
-                        if(response.message() == "OK"){
+                        if(response.message() == "Created"){
+                            //Se hace update al id de la lista para que quede igual al de la api
+                            database_list.updateIdList(response.body()!!.id,list.id)
+                            //Luego se busca el item y se añada a la lista userToDOList
+                            var add_list = database_list.getLastList()
+                            userToDoList.add(add_list)
+                            recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
                             Toast.makeText(this@ToDoListsActivity, "Datos Actualizados", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
                 else{
+                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ListRoom>, t: Throwable) {
+                Log.d("HOLAAAAAAAAA","NO recibe respuesta onfaliure")
+                userToDoList.add(list)
+                recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
+                Toast.makeText(this@ToDoListsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
+    fun putListApi(list: ListRoom){
+        val request = ApiService.buildService(ListApi::class.java)
+        val call = request.updateListApi(TOKEN,list.id,list)
+        call.enqueue(object : Callback<ListRoom> {
+            override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
+                Log.d("RESPONSE",response.body().toString())
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(response.message() == "Created"){
+
+                        }
+                    }
+                }
+                else{
+                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ListRoom>, t: Throwable) {
+                Toast.makeText(this@ToDoListsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
+    fun deleteListApi(list: ListRoom){
+        val request = ApiService.buildService(ListApi::class.java)
+        val call = request.deleteListApi(TOKEN,list.id)
+        call.enqueue(object : Callback<ListRoom> {
+            override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
+                Log.d("RESPONSE",response.body().toString())
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(response.message() == "Created"){
+
+                        }
+                    }
+                }
+                else{
+                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
                     Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
                 }
             }
