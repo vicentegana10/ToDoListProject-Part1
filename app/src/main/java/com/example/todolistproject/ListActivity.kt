@@ -30,6 +30,8 @@ import com.example.todolistproject.utils.TOKEN
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.activity_to_do_lists.*
+import okhttp3.internal.notify
+import okhttp3.internal.notifyAll
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -80,7 +82,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         //---------------------------------------------------------
 
         //Se consumen los items desde la BBDD----------------------------------------
-        var items_uncompleted = database_item.getItems(list_id!!,false)
+        /*var items_uncompleted = database_item.getItems(list_id!!,false)
         if(items_uncompleted!= null){
             var cont = 0
             items_uncompleted.forEach(){
@@ -95,7 +97,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             items_completed.forEach(){
                 list_items_completed.add(it)
             }
-        }
+        }*/
         //-------------------------------------------------------------------------------
         getItemsApi()
         //Recycler View UnCompletedItems----------------------------------
@@ -304,7 +306,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         val intent = Intent(this, ItemViewActivity::class.java)
         Log.d("Item",item.toString())
         intent.putExtra("ITEM",item.id.toString())
-        startActivity(intent)
+        startActivityForResult(intent,2)
     }
 
     //Funcion que cambia el estado del item de completado a no completado
@@ -331,27 +333,26 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         }
     }
 
-    /*//Respuesta de la Item Activity
+    //Respuesta de la Item Activity
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 2) {
             if (resultCode == Activity.RESULT_OK) {
                 if (data != null) {
                     data.apply {
-                        var updateItem:Item = data!!.getParcelableExtra(ITEM)
-                        var position: String = data!!.getStringExtra(POS)
-                        if(updateItem.boolCompleted){
-                            current_list!!.list_items_completed[position.toInt()] = updateItem
+                        var updateItem:ItemRoom = data!!.getParcelableExtra(ITEM)
+                        if(updateItem.done){
+                            list_items_completed[updateItem.position] = updateItem
                         }
                         else{
-                            current_list!!.list_items_uncompleted[position.toInt()] = updateItem
+                            list_items_uncompleted[updateItem.position] = updateItem
                         }
                     }
                 }
 
             }
         }
-    }*/
+    }
 
     override fun onResume() {
         super.onResume()
@@ -454,7 +455,29 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 Log.d("RESPONSE ITEM API",response.body().toString())
                 if (response.isSuccessful) {
                     if (response.body() != null) {
+                        //Se consume de la Api y se agregan las listas a la BBDD
+                        response.body()!!.forEach {
+                            database_item.insertItem(it)
+                        }
 
+                        var items_uncompleted = database_item.getItems(list_id!!,false)
+                        if(items_uncompleted!= null){
+                            var cont = 0
+                            items_uncompleted.forEach(){
+                                list_items_uncompleted.add(it)
+                                cont++
+                            }
+                            itemsCreatedCounter = cont
+                            adapter2.notifyItemInserted(list_items_uncompleted.size)
+                        }
+
+                        var items_completed = database_item.getItems(list_id!!,true)
+                        if(items_completed!= null){
+                            items_completed.forEach(){
+                                list_items_completed.add(it)
+                            }
+                            adapter2.notifyItemInserted(list_items_completed.size)
+                        }
                     }
                 }
                 else{
@@ -464,8 +487,23 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             }
 
             override fun onFailure(call: Call<List<ItemRoom>>, t: Throwable) {
-                //En el caso de que no hay conexion a internet, se utilizan las listas que ya están en la BBDD
-                //Si hay listas en la BBDD, se agregan a userToDoList
+                //Se consumen los items desde la BBDD----------------------------------------
+                var items_uncompleted = database_item.getItems(list_id!!,false)
+                if(items_uncompleted!= null){
+                    var cont = 0
+                    items_uncompleted.forEach(){
+                        list_items_uncompleted.add(it)
+                        cont++
+                    }
+                    itemsCreatedCounter = cont
+                }
+
+                var items_completed = database_item.getItems(list_id!!,true)
+                if(items_completed!= null){
+                    items_completed.forEach(){
+                        list_items_completed.add(it)
+                    }
+                }
 
                 Toast.makeText(this@ListActivity, "No hay conexion a Internet", Toast.LENGTH_SHORT).show()
             }
