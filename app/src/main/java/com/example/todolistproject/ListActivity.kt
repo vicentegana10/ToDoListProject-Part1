@@ -79,27 +79,10 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         var list: ListRoom = database_list.getList(list_id!!)
         textViewListName.text = list.name
         current_list = list
-        //---------------------------------------------------------
-
-        //Se consumen los items desde la BBDD----------------------------------------
-        /*var items_uncompleted = database_item.getItems(list_id!!,false)
-        if(items_uncompleted!= null){
-            var cont = 0
-            items_uncompleted.forEach(){
-                list_items_uncompleted.add(it)
-                cont++
-            }
-            itemsCreatedCounter = cont
-        }
-
-        var items_completed = database_item.getItems(list_id!!,true)
-        if(items_completed!= null){
-            items_completed.forEach(){
-                list_items_completed.add(it)
-            }
-        }*/
-        //-------------------------------------------------------------------------------
+        //------------------------------------------------------------
+        //Se obtienen todos los items de la Api y luego se insertan el la bbdd
         getItemsApi()
+        //-------------------------------------------------------------------------------
         //Recycler View UnCompletedItems----------------------------------
         linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2
@@ -304,7 +287,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     //Se va al vista del item cuando se da click en uno de estos
     override fun onItemClicked(item: ItemRoom,position: Int) {
         val intent = Intent(this, ItemViewActivity::class.java)
-        Log.d("Item",item.toString())
         intent.putExtra("ITEM",item.id.toString())
         startActivityForResult(intent,2)
     }
@@ -316,9 +298,11 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             adapter3.deleteItem(position)
             adapter3.notifyItemRemoved(position)
             item.position = list_items_uncompleted.size
+            //Se actuliza el item a no completado y se actualiza en la bbdd y Api----------------------
             list_items_uncompleted.add(item)
             database_item.insertItem(item)
             updateItemApi(item)
+            //---------------------------------------------------------------------------------
             adapter2.notifyItemInserted(list_items_uncompleted.size)
         }
         else{
@@ -326,9 +310,11 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             adapter2.deleteItem(position)
             adapter2.notifyItemRemoved(position)
             item.position = list_items_completed.size
+            //Se actuliza el item a completado y se actualiza en la bbdd y Api----------------------
             list_items_completed.add(item)
             database_item.insertItem(item)
             updateItemApi(item)
+            //---------------------------------------------------------------------------------
             adapter3.notifyItemInserted(list_items_completed.size)
         }
     }
@@ -360,6 +346,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         adapter3.refereshListItems(list_items_completed)
     }
 
+    //Funcion que hace el post del item en la Api
     fun postItemApi(item: ApiItem){
         val request = ApiService.buildService(ItemApi::class.java)
         val call = request.postItemApi(TOKEN,item)
@@ -368,7 +355,9 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 if (response.isSuccessful) {
                     if (response.body() != null) {
                         if(response.message() == "OK"){
+                            //Se actualiza la id para que que concuerde con la de la api
                             database_item.updateIdItem(response.body()!![0].id,item.items[0].id)
+                            //Se toma el ulitmo item ingresado y liego se inserta al la lista de los no completados
                             var add_item  = database_item.getLastItem()
                             list_items_uncompleted.add(add_item)
                             adapter2.notifyItemInserted(list_items_uncompleted.size)
@@ -377,21 +366,22 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                     }
                 }
                 else{
-                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
                     Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<List<ItemRoom>>, t: Throwable) {
-                Log.d("HOLAAAAAAAAA","NO recibe respuesta onfaliure")
-                //userToDoList.add(list)
-                //recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
-                Toast.makeText(this@ListActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                //Se toma el ulitmo item ingresado y liego se inserta al la lista de los no completados
+                var add_item  = database_item.getLastItem()
+                list_items_uncompleted.add(add_item)
+                adapter2.notifyItemInserted(list_items_uncompleted.size)
+                Toast.makeText(this@ListActivity, "No hay conexion a Internet", Toast.LENGTH_SHORT).show()
             }
         })
 
     }
 
+    //Funcion que hace update del item en la Api
     fun updateItemApi(item: ItemRoom){
         val request = ApiService.buildService(ItemApi::class.java)
         val call = request.updateItemApi(TOKEN,item.id,item)
@@ -400,27 +390,23 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 if (response.isSuccessful) {
                     if (response.body() != null) {
                         if(response.message() == "OK"){
-                            Log.d("RESPONSE ITEM UPD", response.body().toString())
                             Toast.makeText(this@ListActivity, "Datos Actualizados", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
                 else{
-                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
                     Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ItemRoom>, t: Throwable) {
-                Log.d("HOLAAAAAAAAA","NO recibe respuesta onfaliure")
-                //userToDoList.add(list)
-                //recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
                 Toast.makeText(this@ListActivity, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
 
     }
 
+    //Funcion que hace delete del Item en la Api
     fun deleteItemApi(item: ItemRoom){
         val request = ApiService.buildService(ItemApi::class.java)
         val call = request.deleteItemApi(TOKEN,item.id)
@@ -434,7 +420,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                     }
                 }
                 else{
-                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
                     Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
                 }
             }

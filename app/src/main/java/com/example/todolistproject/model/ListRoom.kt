@@ -49,5 +49,3 @@ data class ListRoom(
         const val POSITION = "position"
     }
 }
-
-data class ApiItem(var items: List<ItemRoom>)

@@ -49,16 +49,18 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         //Recibe el item actual
         var item_id = intent.getStringExtra(ITEM).toInt()
         item = database_item.getItem(item_id)
-
+        //Se inicializan los text view con su valor correspondiente
         textViewItemName.text = item?.name
         textViewCreatedDate.text = "Creado el " + item?.due_date
         textViewDate.text = item?.due_date
         edit = item?.starred
 
+        //Si el item no tiene notas
         if (item!!.notes != ""){
             textView5.setText(item!!.notes)
         }
 
+        //Se muestra en un text view si el item está completado o no
         if(item!!.done){
             buttonCompleteItem.text="Completado"
         }
@@ -178,6 +180,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         super.onPause()
     }
 
+    //Funcion que hace update a la Api
     fun updateItemApi(item: ItemRoom){
         val request = ApiService.buildService(ItemApi::class.java)
         val call = request.updateItemApi(TOKEN,item.id,item)
@@ -186,22 +189,17 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
                 if (response.isSuccessful) {
                     if (response.body() != null) {
                         if(response.message() == "OK"){
-                            Log.d("RESPONSE ITEM UPD", response.body().toString())
                             Toast.makeText(this@ItemViewActivity, "Datos Actualizados", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
                 else{
-                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
                     Toast.makeText(this@ItemViewActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ItemRoom>, t: Throwable) {
-                Log.d("HOLAAAAAAAAA","NO recibe respuesta onfaliure")
-                //userToDoList.add(list)
-                //recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
-                Toast.makeText(this@ItemViewActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ItemViewActivity, "No hay conexion a Internet", Toast.LENGTH_SHORT).show()
             }
         })
 

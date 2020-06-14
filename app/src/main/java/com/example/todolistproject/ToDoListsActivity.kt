@@ -321,13 +321,12 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                     }
                 }
                 else{
-                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
                     Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ListRoom>, t: Throwable) {
-                Log.d("HOLAAAAAAAAA","NO recibe respuesta onfaliure")
+                //En caso de que no esté conecatado a internet el dispositivo se añade la lista a la bbdd
                 userToDoList.add(list)
                 recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
                 Toast.makeText(this@ToDoListsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
@@ -442,7 +441,6 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                     }
                 }
                 else{
-                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
                     Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
                 }
             }

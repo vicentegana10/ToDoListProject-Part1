@@ -21,10 +21,13 @@ interface ItemRoomDao {
     fun getItem(id:Int): ItemRoom
     @Query("SELECT * FROM ${TABLE_NAME} ORDER BY ${ID} DESC LIMIT 1")
     fun getLastItem(): ItemRoom
+    //Busca todos los items completados o no completados
     @Query("SELECT * FROM ${TABLE_NAME} WHERE ${LIST_ID} = :list_id AND ${DONE} = :done ORDER BY ${POSITION} ASC")
     fun getItems(list_id:Int, done:Boolean): List<ItemRoom>
     @Query("SELECT * FROM ${TABLE_NAME}")
+    //Retorna todos los Items
     fun getAllItems(): List<ItemRoom>
+    //Retorna toda la lista de Items ordenados segun su posicion
     @Query("SELECT * FROM ${TABLE_NAME} WHERE ${LIST_ID} = :list_id ORDER BY ${POSITION} ASC")
     fun getAllItemsOrdered(list_id: Int): List<ItemRoom>
 }
@@ -64,3 +67,5 @@ data class ItemRoom(
 
     }
 }
+//Clase auxiliar que envia a la api los Items
+data class ApiItem(var items: List<ItemRoom>)
