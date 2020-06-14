@@ -77,7 +77,10 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         var list: ListRoom = database_list.getList(list_id!!)
         textViewListName.text = list.name
         current_list = list
-        //--------------------------------------------------
+        //---------------------------------------------------------
+
+
+        //Se consumen los items desde la BBDD----------------------------------------
         var items_uncompleted = database_item.getItems(list_id!!,false)
         if(items_uncompleted!= null){
             var cont = 0
@@ -94,7 +97,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 list_items_completed.add(it)
             }
         }
-
+        //-------------------------------------------------------------------------------
 
         //Recycler View UnCompletedItems----------------------------------
         linearLayoutManager2 = LinearLayoutManager(this)
@@ -154,6 +157,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 //Se actualiza la posicion de los items no completados en la BBDD
                 list_items_uncompleted.forEach{
                     database_item.insertItem(it)
+                    updateItemApi(it)
                 }
                 return true
             }
@@ -179,11 +183,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 Log.d("DELETE",database_item.getAllItemsOrdered(list_id!!).toString())
                 deleteItemApi(item)
                 val snackbar = Snackbar.make(itemLayout,"Eliminaste un item",Snackbar.LENGTH_LONG)
-                /*snackbar.setAction("Deshacer",{
-                    adapter2.restoreItem(posicion,item)
-                    adapter2.notifyItemInserted(posicion)
-                })
-                snackbar.setActionTextColor(Color.BLUE)*/
                 snackbar.show()
             }
 
@@ -222,6 +221,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 //Se actualiza la posicion de los items no completados en la BBDD
                 list_items_completed.forEach{
                     database_item.insertItem(it)
+                    updateItemApi(it)
                 }
                 return true
             }
@@ -246,11 +246,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 database_item.deleteItem(item)
                 deleteItemApi(item)
                 val snackbar = Snackbar.make(itemLayout,"Eliminaste un item",Snackbar.LENGTH_LONG)
-                /*snackbar.setAction("Deshacer",{
-                    adapter3.restoreItem(posicion,item)
-                    adapter3.notifyItemInserted(posicion)
-                })
-                snackbar.setActionTextColor(Color.BLUE)*/
                 snackbar.show()
             }
 
@@ -361,8 +356,8 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
     override fun onResume() {
         super.onResume()
-        adapter2.notifyDataSetChanged()
-        adapter3.notifyDataSetChanged()
+        adapter2.refereshListItems(list_items_uncompleted)
+        adapter3.refereshListItems(list_items_completed)
     }
 
     fun postItemApi(item: ApiItem){
@@ -450,6 +445,4 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         })
 
     }
-
-
 }

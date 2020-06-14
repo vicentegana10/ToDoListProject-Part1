@@ -18,7 +18,7 @@ interface ListApi {
     ): Call<ListRoom>
 
     @GET("lists/")
-    fun getListsApi(@Header("token") token: String?): Call<ListRoom>
+    fun getListsApi(@Header("token") token: String?): Call<List<ListRoom>>
 
     @GET("lists/{list_id}")
     fun getListApi(@Header("token") token: String?,

@@ -10,7 +10,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 
-import com.example.todolistproject.List
 import com.example.todolistproject.R
 import kotlinx.android.synthetic.main.activity_list.view.*
 import kotlinx.android.synthetic.main.dialog_list.view.*

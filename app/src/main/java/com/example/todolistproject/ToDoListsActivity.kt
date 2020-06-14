@@ -56,6 +56,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     var userLog: UserRoom? = null//Usuario
     var userToDoList = ArrayList<ListRoom>()//Lista con las ToDoList del usuario
     var listsCreatedCounter = 0//Contador de la cantidad de listas
+    var check_api:Boolean ?=null
 
     lateinit var listLayout:ConstraintLayout
 
@@ -85,22 +86,11 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
             database.insert(userToInsert)
         }
 
-        val cm = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting!!
-        Log.d("CONEXION",isConnected.toString())
-        //Si hay listas en la BBDD, se agregan a userToDoList
-        if(database_list.getAllList() != null){
-            if(userToDoList != null){
-                var countLists = 0
-                database_list.getAllListOrdered().forEach{
-                    userToDoList.add(it)
-                    countLists++
-                }
-                listsCreatedCounter = countLists
-                Log.d("Hola",countLists.toString())
-            }
-        }
+        //Se obtienen en la listas de la Api
+        //En caso de no tener internet, se cargan las listas que estaban en la BBDD
+        getListsApi()
+
+
         // Aca una variable que se borra, es para ir viendo la bd en Debug
         val usersInRoomDao  = database.getAllUsers()
         println("inserted in BD")
@@ -158,9 +148,10 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).changeListPosition(iniPosition,finPosition)
                 recyclerViewLists.adapter?.notifyItemMoved(iniPosition,finPosition)
 
-                //Se actualiza la posicion de las listas en la BBDD
+                //Se actualiza la posicion de las listas en la BBDD y Api
                 userToDoList.forEach{
                     database_list.insertList(it)
+                    putListApi(it)
                 }
                 //userLog?.let { updateUserRoom(it) }
                 return true
@@ -174,7 +165,9 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
                     var updateList = userToDoList[counter+1]
                     updateList.position=counter
+                    //Se actualizan las posiciones en la bbdd
                     database_list.insertList(updateList)
+                    //Se actualizan las posiciones en la api
                     userToDoList.set(counter+1, updateList)
                     recyclerViewLists.adapter?.notifyItemChanged(counter+1)
                     counter++
@@ -188,26 +181,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 database_list.deleteList(list)
                 Log.d("ELIMINA",database_list.getAllListOrdered().toString())
                 val snackbar = Snackbar.make(listLayout,"Eliminaste una Lista",Snackbar.LENGTH_LONG)
-                /*snackbar.setAction("Deshacer") {
-                    ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).restoreList(position,list)
-                    recyclerViewLists.adapter?.notifyItemInserted(position)
-                    // revertir lo hecho en modificar el atributo position de la lista
-                    var counter2 = viewHolder.adapterPosition
-                    while (counter2+1<userToDoList.size){
-
-                        var updateList2 = userToDoList[counter2+1]
-                        updateList2.position=counter2+1
-                        userToDoList.set(counter2+1, updateList2)
-                        recyclerViewLists.adapter?.notifyItemChanged(counter2+1)
-                        counter2++
-                    }
-                    listsCreatedCounter+=1
-
-
-                }*/
-                //snackbar.setActionTextColor(Color.BLUE)
                 snackbar.show()
-                //userLog?.let { updateUserRoom(it) }
             }
 
         }
@@ -361,22 +335,20 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         })
 
     }
-
-    fun putListApi(list: ListRoom){
+    //Funcion que hace el post de la lista en la api, pero no hace nada en la base de datos local
+    fun postUpdateListApi(list: ListRoom){
         val request = ApiService.buildService(ListApi::class.java)
-        val call = request.updateListApi(TOKEN,list.id,list)
+        val call = request.postList(TOKEN,list)
         call.enqueue(object : Callback<ListRoom> {
             override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
-                Log.d("RESPONSE",response.body().toString())
                 if (response.isSuccessful) {
                     if (response.body() != null) {
                         if(response.message() == "Created"){
-
+                            Toast.makeText(this@ToDoListsActivity, "Datos Actualizados en la Api", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
                 else{
-                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
                     Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -388,16 +360,84 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
     }
 
+    //Funcion que actualiza las listas ya ingresadas en la api
+    fun putListApi(list: ListRoom){
+        val request = ApiService.buildService(ListApi::class.java)
+        val call = request.updateListApi(TOKEN,list.id,list)
+        call.enqueue(object : Callback<ListRoom> {
+            override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        Toast.makeText(this@ToDoListsActivity, "Datos Actualizados en la Api", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else{
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ListRoom>, t: Throwable) {
+                Toast.makeText(this@ToDoListsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+    //Elimina una lista de la api
     fun deleteListApi(list: ListRoom){
         val request = ApiService.buildService(ListApi::class.java)
         val call = request.deleteListApi(TOKEN,list.id)
         call.enqueue(object : Callback<ListRoom> {
             override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        Toast.makeText(this@ToDoListsActivity, "Datos Actualizados en la Api", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else{
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ListRoom>, t: Throwable) {
+                Toast.makeText(this@ToDoListsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
+    //Se obtienen todas las listas de la api y si se esta ofline se ingresan las listas que estan en la bbdd
+    fun getListsApi(){
+        val request = ApiService.buildService(ListApi::class.java)
+        val call = request.getListsApi(TOKEN)
+        call.enqueue(object : Callback<List<ListRoom>> {
+            override fun onResponse(call: Call<List<ListRoom>>, response: Response<List<ListRoom>>) {
                 Log.d("RESPONSE",response.body().toString())
                 if (response.isSuccessful) {
                     if (response.body() != null) {
-                        if(response.message() == "Created"){
-
+                        var bbdd_size = database_list.getAllList().size
+                        var api_size = response.body()!!.size
+                        //Si el largo de la bbdd no coincide con la de la api, se actualizan los datos de la api
+                        if(bbdd_size != api_size){
+                            for( i in api_size..(bbdd_size-1)){
+                                var list = database_list.getAllList()[i]
+                                postUpdateListApi(list)
+                            }
+                        }
+                        //Se consume de la Api y se agregan las listas a la BBDD
+                        response.body()!!.forEach {
+                            database_list.insertList(it)
+                            recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
+                        }
+                        //Si hay listas en la BBDD, se agregan a userToDoList
+                        if(database_list.getAllList() != null){
+                            if(userToDoList != null){
+                                var countLists = 0
+                                database_list.getAllListOrdered().forEach{
+                                    userToDoList.add(it)
+                                    countLists++
+                                }
+                                listsCreatedCounter = countLists
+                            }
                         }
                     }
                 }
@@ -407,14 +447,25 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 }
             }
 
-            override fun onFailure(call: Call<ListRoom>, t: Throwable) {
-                Toast.makeText(this@ToDoListsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            override fun onFailure(call: Call<List<ListRoom>>, t: Throwable) {
+                //En el caso de que no hay conexion a internet, se utilizan las listas que ya están en la BBDD
+                //Si hay listas en la BBDD, se agregan a userToDoList
+                if(database_list.getAllList() != null){
+                    if(userToDoList != null){
+                        var countLists = 0
+                        database_list.getAllListOrdered().forEach{
+                            userToDoList.add(it)
+                            countLists++
+                        }
+                        listsCreatedCounter = countLists
+                        Log.d("Hola",countLists.toString())
+                    }
+                }
+                recyclerViewLists.adapter!!.notifyDataSetChanged()
+                Toast.makeText(this@ToDoListsActivity, "No hay conexion a Internet", Toast.LENGTH_SHORT).show()
             }
         })
 
     }
 
 }
-
-@Parcelize
-data class List(var name: String, var position: Int, var list_items_uncompleted: ArrayList<Item>, var list_items_completed: ArrayList<Item>):Parcelable

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todolistproject.List
 import com.example.todolistproject.R
 import com.example.todolistproject.ToDoListsActivity
 import com.example.todolistproject.classes.Item
@@ -15,7 +14,7 @@ import com.example.todolistproject.model.ItemRoom
 import kotlinx.android.synthetic.main.recyclerview_item_row.view.*
 
 
-class UncompleteItemsAdapter(private val itemList: ArrayList<ItemRoom>,val itemClickListener: OnUnCompleteItemClickListener) : RecyclerView.Adapter<UncompleteItemsAdapter.ItemCard>() {
+class UncompleteItemsAdapter(private var itemList: ArrayList<ItemRoom>,val itemClickListener: OnUnCompleteItemClickListener) : RecyclerView.Adapter<UncompleteItemsAdapter.ItemCard>() {
 
     fun getItem(position: Int): ItemRoom {
         return itemList[position]
@@ -33,6 +32,11 @@ class UncompleteItemsAdapter(private val itemList: ArrayList<ItemRoom>,val itemC
         val list = itemList[initialPosition]
         itemList.removeAt(initialPosition)
         itemList.add(finalPosition,list)
+    }
+
+    fun refereshListItems(listItem: ArrayList<ItemRoom>){
+        itemList = listItem
+        notifyDataSetChanged()
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemCard {
         val inflatedView = parent.inflate(R.layout.recyclerview_item_row, false)

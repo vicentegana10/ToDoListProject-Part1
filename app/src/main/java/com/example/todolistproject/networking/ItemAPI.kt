@@ -25,7 +25,7 @@ interface ItemApi {
     @GET("items/?list_id={list_id}")
     fun getItemsApi(@Header("token") token: String?,
                    @Path("list_id") list_id: Int?
-    ): Call<ItemRoom>
+    ): Call<List<ItemRoom>>
 
     @DELETE("items/{item_id}")
     fun deleteItemApi(@Header("token") token: String?,
