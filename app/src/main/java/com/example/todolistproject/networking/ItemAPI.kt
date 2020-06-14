@@ -22,9 +22,9 @@ interface ItemApi {
                    @Path("item_id") item_id: Int?
     ): Call<ItemRoom>
 
-    @GET("items/?list_id={list_id}")
+    @GET("items/")
     fun getItemsApi(@Header("token") token: String?,
-                   @Path("list_id") list_id: Int?
+                   @Query("list_id") list_id: Int?
     ): Call<List<ItemRoom>>
 
     @DELETE("items/{item_id}")

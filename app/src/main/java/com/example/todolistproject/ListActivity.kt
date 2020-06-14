@@ -79,7 +79,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         current_list = list
         //---------------------------------------------------------
 
-
         //Se consumen los items desde la BBDD----------------------------------------
         var items_uncompleted = database_item.getItems(list_id!!,false)
         if(items_uncompleted!= null){
@@ -98,7 +97,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             }
         }
         //-------------------------------------------------------------------------------
-
+        getItemsApi()
         //Recycler View UnCompletedItems----------------------------------
         linearLayoutManager2 = LinearLayoutManager(this)
         recyclerViewUncompleted.layoutManager = linearLayoutManager2
@@ -445,4 +444,33 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         })
 
     }
+
+    //Se obtienen todas las listas de la api y si se esta ofline se ingresan las listas que estan en la bbdd
+    fun getItemsApi(){
+        val request = ApiService.buildService(ItemApi::class.java)
+        val call = request.getItemsApi(TOKEN,list_id)
+        call.enqueue(object : Callback<List<ItemRoom>> {
+            override fun onResponse(call: Call<List<ItemRoom>>, response: Response<List<ItemRoom>>) {
+                Log.d("RESPONSE ITEM API",response.body().toString())
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+
+                    }
+                }
+                else{
+                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
+                    Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<ItemRoom>>, t: Throwable) {
+                //En el caso de que no hay conexion a internet, se utilizan las listas que ya están en la BBDD
+                //Si hay listas en la BBDD, se agregan a userToDoList
+
+                Toast.makeText(this@ListActivity, "No hay conexion a Internet", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
 }
