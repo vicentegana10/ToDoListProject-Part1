@@ -154,6 +154,8 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                     var updateItem = list_items_uncompleted[counter+1]
                     updateItem.position=counter
                     database_item.insertItem(updateItem)
+                    //Se actualizan las posiciones en la api
+                    updateItemApi(updateItem)
                     list_items_uncompleted.set(counter+1, updateItem)
                     adapter2.notifyItemChanged(counter+1)
                     counter++
@@ -218,6 +220,8 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                     var updateItem = list_items_completed[counter+1]
                     updateItem.position=counter
                     database_item.insertItem(updateItem)
+                    //Se actualizan las posiciones en la api
+                    updateItemApi(updateItem)
                     list_items_completed.set(counter+1, updateItem)
                     adapter3.notifyItemChanged(counter+1)
                     counter++
@@ -244,7 +248,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val due_date: String = simpleDateFormat.format(Date())
         //Se crea el nuevo item
-        var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",itemsCreatedCounter-1,list_id!!,false,false,due_date,"")
+        var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",itemsCreatedCounter,list_id!!,false,false,due_date,"")
         //Se agrega a la BBDD y a la lista
         database_item.insertItem(newItem)
         var add_item  = database_item.getLastItem()

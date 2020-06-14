@@ -168,6 +168,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                     //Se actualizan las posiciones en la bbdd
                     database_list.insertList(updateList)
                     //Se actualizan las posiciones en la api
+                    putListApi(updateList)
                     userToDoList.set(counter+1, updateList)
                     recyclerViewLists.adapter?.notifyItemChanged(counter+1)
                     counter++
@@ -422,6 +423,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                                 postUpdateListApi(list)
                             }
                         }
+
                         //Se consume de la Api y se agregan las listas a la BBDD
                         response.body()!!.forEach {
                             database_list.insertList(it)
@@ -435,6 +437,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                                     userToDoList.add(it)
                                     countLists++
                                 }
+
                                 listsCreatedCounter = countLists
                             }
                         }
