@@ -6,6 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".ItemViewActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBarItem"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:menu="@menu/top_app_bar_item"
+            app:navigationIcon="@drawable/ic_chevron_left_black_24dp"
+            app:title="page_title" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!--
+
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
@@ -41,6 +61,8 @@
 
     </LinearLayout>
 
+    -->
+
     <TextView
         android:id="@+id/textViewCreatedDate"
         android:layout_width="wrap_content"
@@ -49,7 +71,7 @@
         android:text="Creada el "
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout3" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -215,6 +237,8 @@
             android:text="Estado" />
     </LinearLayout>
 
+    <!--
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/renameItemButton"
         android:layout_width="wrap_content"
@@ -227,5 +251,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_edit_black_24dp" />
+
+        -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

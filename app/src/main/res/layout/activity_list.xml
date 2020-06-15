@@ -7,6 +7,26 @@
     android:layout_height="match_parent"
     tools:context=".ListActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBarList"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:menu="@menu/top_app_bar_back"
+            app:navigationIcon="@drawable/ic_chevron_left_black_24dp"
+            app:title="page_title" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+
     <LinearLayout
         android:id="@+id/linearLayoutEditShareList"
         android:layout_width="match_parent"
@@ -39,6 +59,8 @@
             android:onClick="onShareListButtonClick"
             android:text="Compartir" />
     </LinearLayout>
+
+    <!--
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -73,18 +95,20 @@
             android:textSize="20dp" />
     </LinearLayout>
 
+    -->
+
     <Button
         android:id="@+id/buttonAddItemToList"
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="80dp"
         android:layout_weight="1"
         android:background="@drawable/btn"
         android:onClick="onAddItemToListButtonClick"
         android:text=" + Añadir To Do"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <LinearLayout
         android:id="@+id/linearLayout5"

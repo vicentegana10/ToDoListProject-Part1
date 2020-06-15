@@ -16,7 +16,9 @@ import com.example.todolistproject.model.UserRoomDao
 import com.example.todolistproject.networking.ApiService
 import com.example.todolistproject.networking.UserApi
 import com.example.todolistproject.utils.TOKEN
+import kotlinx.android.synthetic.main.activity_app_menu.*
 import kotlinx.android.synthetic.main.activity_my_profile.*
+import kotlinx.android.synthetic.main.activity_my_profile.topAppBarProfile
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -35,6 +37,7 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_profile)
 
+        topAppBarProfile.title = "Perfil"
 
         // Se muestra en la View los datos del usuario
         var user: UserRoom = intent.getParcelableExtra(USER)
@@ -54,9 +57,18 @@ class MyProfileActivity : AppCompatActivity(),dialogChangeListener {
         textViewProfilePhone.text=(textViewProfilePhone.text.toString()+user.phone)
         imageViewAccountCircle.loadPhoto(user.profile_photo)
 
-        buttonBackMyProfile.setOnClickListener(){
+        topAppBarProfile.setNavigationOnClickListener{
             backToAppMenu(user)
-            //onBackPressed()
+        }
+        topAppBarProfile.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.logo -> {
+                    // Handle favorite icon press
+                    Toast.makeText(applicationContext,"Nombre_Empresa. Since 2020", Toast.LENGTH_LONG).show()
+                    true
+                }
+                else -> false
+            }
         }
 
         // CLICKLISTENERS para cuando se quiera editar un campo, se abrirá un Dialog que recibe como parametro que se quiere cambiar

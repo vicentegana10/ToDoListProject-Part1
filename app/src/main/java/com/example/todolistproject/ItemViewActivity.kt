@@ -20,6 +20,7 @@ import com.example.todolistproject.model.ItemRoomDao
 import com.example.todolistproject.networking.ApiService
 import com.example.todolistproject.networking.ItemApi
 import com.example.todolistproject.utils.TOKEN
+import kotlinx.android.synthetic.main.activity_app_menu.*
 import kotlinx.android.synthetic.main.activity_item_view.*
 import kotlinx.android.synthetic.main.activity_list.*
 import retrofit2.Call
@@ -50,7 +51,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         var item_id = intent.getStringExtra(ITEM).toInt()
         item = database_item.getItem(item_id)
         //Se inicializan los text view con su valor correspondiente
-        textViewItemName.text = item?.name
+        topAppBarItem.title =  item?.name
         textViewCreatedDate.text = "Creado el " + item?.due_date
         textViewDate.text = item?.due_date
         edit = item?.starred
@@ -70,9 +71,22 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
             imageViewStar.setImageResource(R.drawable.ic_star_yellow_24dp)
         }
 
-        buttonBackItem.setOnClickListener(){
+        topAppBarItem.setNavigationOnClickListener{
             onBackPressed()
         }
+        topAppBarItem.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.logo -> {
+                    // Handle favorite icon press
+                    //Toast.makeText(applicationContext,"Nombre_Empresa. Since 2020", Toast.LENGTH_LONG).show()
+                    changeNameButtonClicked()
+                    true
+                }
+                else -> false
+            }
+        }
+
+
         //Se edita la fecha de plazo al clickear el calendario
         imageViewCalendar.setOnClickListener(){
             EditDate()
@@ -163,7 +177,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
         super.onBackPressed()
     }
     //Se abre el dialog cuando se hace click en el boton
-    fun changeNameButtonClicked(view: View){
+    fun changeNameButtonClicked(){
         val dialogChangeName = DialogChangeItemName()
         dialogChangeName.show(supportFragmentManager, "dialogProduct")
     }
@@ -174,7 +188,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
             database_item.insertItem(item!!)
         }
         updateItemApi(item!!)
-        textViewItemName.text = item?.name
+        topAppBarItem.title =  item?.name
     }
     override fun onPause(){
         super.onPause()

@@ -28,8 +28,10 @@ import com.example.todolistproject.networking.ItemApi
 import com.example.todolistproject.networking.ListApi
 import com.example.todolistproject.utils.TOKEN
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_app_menu.*
 import kotlinx.android.synthetic.main.activity_list.*
 import kotlinx.android.synthetic.main.activity_to_do_lists.*
+import kotlinx.android.synthetic.main.activity_to_do_lists.topAppBar
 import okhttp3.internal.notify
 import okhttp3.internal.notifyAll
 import retrofit2.Call
@@ -77,7 +79,8 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         //Lista que llega de la activity anterior ----------
         list_id = intent.getStringExtra(LIST).toInt()
         var list: ListRoom = database_list.getList(list_id!!)
-        textViewListName.text = list.name
+
+        topAppBarList.title =  list.name
         current_list = list
         //------------------------------------------------------------
         //Se obtienen todos los items de la Api y luego se insertan el la bbdd
@@ -99,8 +102,18 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         //--------------------------------------------------------------------------
 
         //Se devulve a la vista anterior
-        buttonBack.setOnClickListener(){
+        topAppBarList.setNavigationOnClickListener{
            onBackPressed()
+        }
+        topAppBarList.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.logo -> {
+                    // Handle favorite icon press
+                    Toast.makeText(applicationContext,"Nombre_Empresa. Since 2020", Toast.LENGTH_LONG).show()
+                    true
+                }
+                else -> false
+            }
         }
 
         if(!expand){

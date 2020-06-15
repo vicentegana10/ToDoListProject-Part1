@@ -3,9 +3,12 @@ package com.example.todolistproject
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.abs.clase11.utils.loadPhoto
 import com.example.todolistproject.model.UserRoom
 import kotlinx.android.synthetic.main.activity_app_menu.*
+import kotlinx.android.synthetic.main.activity_app_menu.topAppBarMenu
+import kotlinx.android.synthetic.main.activity_to_do_lists.*
 
 class AppMenuActivity : AppCompatActivity() {
 
@@ -19,6 +22,8 @@ class AppMenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_app_menu)
 
+        topAppBarMenu.title = "Menu"
+
         // Muestra en su view el nombre y apellidos, el mail y la foto gracias a GlideAppModule en ImageViewExtension
         var user:UserRoom = intent.getParcelableExtra(USER)
         userLog1 = user
@@ -30,9 +35,19 @@ class AppMenuActivity : AppCompatActivity() {
             LogOut()
         }
 
-        buttonBackAppMenu.setOnClickListener(){
+        topAppBarMenu.setNavigationOnClickListener{
             backToToDoLists(user)
             //onBackPressed()
+        }
+        topAppBarMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.logo -> {
+                    // Handle favorite icon press
+                    Toast.makeText(applicationContext,"Nombre_Empresa. Since 2020", Toast.LENGTH_LONG).show()
+                    true
+                }
+                else -> false
+            }
         }
 
         ButtonGoToMyProfile.setOnClickListener(){

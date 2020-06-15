@@ -6,6 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".MyProfileActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBarProfile"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:menu="@menu/top_app_bar_back"
+            app:navigationIcon="@drawable/ic_chevron_left_black_24dp"
+            app:title="page_title" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!--
+
     <LinearLayout
         android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
@@ -39,14 +59,16 @@
 
     </LinearLayout>
 
+    -->
+
     <ImageView
         android:id="@+id/imageViewAccountCircle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="90dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_account_circle_grey_144dp" />
 
     <TextView
