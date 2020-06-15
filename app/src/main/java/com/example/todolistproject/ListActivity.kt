@@ -248,7 +248,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val due_date: String = simpleDateFormat.format(Date())
         //Se crea el nuevo item
-        var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",itemsCreatedCounter,list_id!!,false,false,due_date,"")
+        var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",list_items_uncompleted.size ,list_id!!,false,false,due_date,"")
         //Se agrega a la BBDD y a la lista
         database_item.insertItem(newItem)
         var add_item  = database_item.getLastItem()
@@ -307,6 +307,19 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             database_item.insertItem(item)
             updateItemApi(item)
             //---------------------------------------------------------------------------------
+            // CAMBIAR POSICION DE TODOS HACIA ABAJO EN -1
+            var counter =0
+            list_items_completed.forEach {
+                if (counter<position){counter++}
+                else{
+                    it.position--
+                    updateItemApi(it)
+                    adapter3.notifyItemChanged(counter)
+                    counter++
+                }
+            }
+
+            //--------------------------------------------------
             adapter2.notifyItemInserted(list_items_uncompleted.size)
         }
         else{
@@ -319,6 +332,18 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             database_item.insertItem(item)
             updateItemApi(item)
             //---------------------------------------------------------------------------------
+            // CAMBIAR POSICION DE TODOS HACIA ABAJO EN -1
+            var counter =0
+            list_items_uncompleted.forEach {
+                if (counter<position){counter++}
+                else{
+                    it.position--
+                    updateItemApi(it)
+                    adapter2.notifyItemChanged(counter)
+                    counter++
+                }
+            }
+            //-----------------------------
             adapter3.notifyItemInserted(list_items_completed.size)
         }
     }
