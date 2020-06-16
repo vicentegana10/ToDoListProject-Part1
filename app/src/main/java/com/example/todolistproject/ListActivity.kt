@@ -508,7 +508,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                     }
                 }
                 else{
-                    Log.d("HOLAAAAAAAAA","NO recibe respuesta else")
                     Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
                 }
             }

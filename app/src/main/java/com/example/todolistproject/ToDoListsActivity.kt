@@ -36,6 +36,7 @@ import com.example.todolistproject.adapters.OnItemClickListener
 import com.example.todolistproject.classes.Item
 import com.example.todolistproject.model.*
 import com.example.todolistproject.networking.ApiService
+import com.example.todolistproject.networking.ItemApi
 import com.example.todolistproject.networking.ListApi
 import com.example.todolistproject.networking.UserApi
 import com.example.todolistproject.utils.TOKEN
@@ -62,6 +63,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
     lateinit var database: UserRoomDao
     lateinit var database_list: ListRoomDao
+    lateinit var database_item: ItemRoomDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +77,9 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         recyclerViewLists.adapter = ListsAdapter(userToDoList,this,this)
         recyclerViewLists.layoutManager = LinearLayoutManager(this)
 
+        //Se inicializan las bbdd de lista, items y usuario
         database_list = Room.databaseBuilder(this, Database::class.java,"list").allowMainThreadQueries().build().listRoomDao()
+        database_item = Room.databaseBuilder(this, Database::class.java,"item").allowMainThreadQueries().build().itemRoomDao()
         // Cargar BASE DE DATOS CON .allowMainThreadQueries() NO ES ASINCRONA
         database = Room.databaseBuilder(this, Database::class.java,"userRoom").allowMainThreadQueries().build().userRoomDao()
 
@@ -153,7 +157,6 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                     database_list.insertList(it)
                     putListApi(it)
                 }
-                //userLog?.let { updateUserRoom(it) }
                 return true
             }
 
@@ -178,9 +181,13 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 val list = ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).getList(position)
                 ListsAdapter(userToDoList,this@ToDoListsActivity,this@ToDoListsActivity).deleteList(viewHolder.adapterPosition)
                 recyclerViewLists.adapter?.notifyItemRemoved(position)
+                //Se borra la lista y sus items asociados
+                database_item.getItemsList(list.id!!).forEach {
+                    database_item.deleteItem(it)
+                    deleteItemApi(it)
+                }
                 deleteListApi(list)
                 database_list.deleteList(list)
-                Log.d("ELIMINA",database_list.getAllListOrdered().toString())
                 val snackbar = Snackbar.make(listLayout,"Eliminaste una Lista",Snackbar.LENGTH_LONG)
                 snackbar.show()
             }
@@ -248,11 +255,6 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
         //userLog?.let { updateUserRoom(it) }
     }
-    //Funcion logOut que genera un intent hacia login
-    fun LogOut(){
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
-    }
 
     //Restaura el contenido al girar la pantalla
     private fun restoreContent(savedInstanceState: Bundle?) {
@@ -269,38 +271,6 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         outState.putParcelableArrayList("UserList",userToDoList)
     }
 
-    //Recibe una lista actualizada con todos los items añadidos en el detalle de cada lista
-    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (data != null) {
-                    data.apply {
-                        var updateList:List = data!!.getParcelableExtra(LIST)
-                        userToDoList[updateList.position] = updateList
-                    }
-                }
-
-            }
-        }
-    }*/
-
-    /*
-    // FUNCION PARA ACTUALIZAR EL USERROOM DE LA BBDD
-    fun updateUserRoom(user: User){
-        AsyncTask.execute{
-            // LE PASAMOS EL USUARIO CON EL DATO YA CAMBIADO
-            val userRoomActual = database.getUserRoomData(user.email)
-            val userToUpdate =  UserRoom(userRoomActual.email, userRoomActual.name, userRoomActual.last_name, userRoomActual.phone, userRoomActual.profile_photo,
-                                        userRoomActual.password,userRoomActual.to_do_lists)
-            database.updateUser(userToUpdate)
-            // ESTO ESTA SOLO PARA VER DEBUG Y VER QUE FUNCIONA
-            val usersInRoomDao  = database.getAllUsers()
-            println("update Database")
-        }
-    }
-
-     */
     //Funcion que hace POST en la lista
     fun postListApi(list: ListRoom){
         val request = ApiService.buildService(ListApi::class.java)
@@ -405,18 +375,42 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
     }
 
+    //Funcion que hace delete del Item en la Api
+    fun deleteItemApi(item: ItemRoom){
+        val request = ApiService.buildService(ItemApi::class.java)
+        val call = request.deleteItemApi(TOKEN,item.id)
+        call.enqueue(object : Callback<ItemRoom> {
+            override fun onResponse(call: Call<ItemRoom>, response: Response<ItemRoom>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(response.message() == "No Content"){
+
+                        }
+                    }
+                }
+                else{
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ItemRoom>, t: Throwable) {
+                Toast.makeText(this@ToDoListsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
+
     //Se obtienen todas las listas de la api y si se esta ofline se ingresan las listas que estan en la bbdd
     fun getListsApi(){
         val request = ApiService.buildService(ListApi::class.java)
         val call = request.getListsApi(TOKEN)
         call.enqueue(object : Callback<List<ListRoom>> {
             override fun onResponse(call: Call<List<ListRoom>>, response: Response<List<ListRoom>>) {
-                Log.d("RESPONSE",response.body().toString())
                 if (response.isSuccessful) {
                     if (response.body() != null) {
                         var bbdd_size = database_list.getAllList().size
                         var api_size = response.body()!!.size
-                        //Si el largo de la bbdd no coincide con la de la api, se actualizan los datos de la api
+                        //Si el largo de la bbdd no coincide con la de la api, se actualizan los datos de la api (Caso 4 en algunos casos)
                         if(bbdd_size != api_size){
                             for( i in api_size..(bbdd_size-1)){
                                 var list = database_list.getAllList()[i]
@@ -459,7 +453,6 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                             countLists++
                         }
                         listsCreatedCounter = countLists
-                        Log.d("Hola",countLists.toString())
                     }
                 }
                 recyclerViewLists.adapter!!.notifyDataSetChanged()

@@ -24,6 +24,8 @@ interface ItemRoomDao {
     //Busca todos los items completados o no completados
     @Query("SELECT * FROM ${TABLE_NAME} WHERE ${LIST_ID} = :list_id AND ${DONE} = :done ORDER BY ${POSITION} ASC")
     fun getItems(list_id:Int, done:Boolean): List<ItemRoom>
+    @Query("SELECT * FROM ${TABLE_NAME} WHERE ${LIST_ID} = :list_id")
+    fun getItemsList(list_id:Int): List<ItemRoom>
     @Query("SELECT * FROM ${TABLE_NAME}")
     //Retorna todos los Items
     fun getAllItems(): List<ItemRoom>
