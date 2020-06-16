@@ -408,7 +408,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
             override fun onResponse(call: Call<List<ListRoom>>, response: Response<List<ListRoom>>) {
                 if (response.isSuccessful) {
                     if (response.body() != null) {
-                        var bbdd_size = database_list.getAllList().size
+                        /*var bbdd_size = database_list.getAllList().size
                         var api_size = response.body()!!.size
                         //Si el largo de la bbdd no coincide con la de la api, se actualizan los datos de la api (Caso 4 en algunos casos)
                         if(bbdd_size != api_size){
@@ -416,7 +416,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                                 var list = database_list.getAllList()[i]
                                 postUpdateListApi(list)
                             }
-                        }
+                        }*/
 
                         //Se consume de la Api y se agregan las listas a la BBDD
                         response.body()!!.forEach {
