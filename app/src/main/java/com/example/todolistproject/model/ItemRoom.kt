@@ -53,7 +53,12 @@ data class ItemRoom(
     @ColumnInfo(name = DUE_DATE)
     var due_date: String,
     @ColumnInfo(name = NOTES)
-    var notes: String
+    var notes: String,
+    @ColumnInfo(name = LAT)
+    var lat: Double,
+    @ColumnInfo(name = LONG)
+    var longi: Double
+
 
 ): Parcelable {
     companion object {
@@ -66,8 +71,21 @@ data class ItemRoom(
         const val DONE = "done"
         const val DUE_DATE = "due_date"
         const val NOTES = "notes"
+        const val LAT = "latitude"
+        const val LONG = "long"
 
     }
 }
 //Clase auxiliar que envia a la api los Items
-data class ApiItem(var items: List<ItemRoom>)
+data class ApiItem(var items: List<ItemApi>)
+
+data class ItemApi(var id: Int?,
+                var name: String,
+                var position: Int,
+                var list_id: Int,
+                var starred: Boolean,
+                var done: Boolean,
+                var due_date: String,
+                var notes: String,
+                var lat: Double,
+                var long: Double)

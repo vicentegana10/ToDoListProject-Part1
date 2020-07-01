@@ -3,8 +3,11 @@ package com.example.todolistproject
 // no son necesarios y que muestran un Toast.
 // Su función para esta entrega es poder mostrar los items de cada lista y que al volver no se haya perdido el orden de las listas.
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
@@ -13,6 +16,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +30,7 @@ import com.example.todolistproject.model.*
 import com.example.todolistproject.networking.ApiService
 import com.example.todolistproject.networking.ItemApi
 import com.example.todolistproject.networking.ListApi
+import com.example.todolistproject.utils.LocationUtil
 import com.example.todolistproject.utils.TOKEN
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_app_menu.*
@@ -41,12 +46,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.List
+import androidx.lifecycle.Observer
 
 
 class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
     companion object {
         var LIST = "LIST"
+        var LOCATION_PERMISSION = 100
     }
 
     private lateinit var linearLayoutManager2: LinearLayoutManager
@@ -65,6 +72,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     lateinit var database_list: ListRoomDao
     lateinit var database_item: ItemRoomDao
 
+    private lateinit var locationData: LocationUtil
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +83,8 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
 
         itemLayout = activity_content_items
+
+        locationData = LocationUtil(this)
 
         //Lista que llega de la activity anterior ----------
         list_id = intent.getStringExtra(LIST).toInt()
@@ -261,14 +271,16 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         val simpleDateFormat = SimpleDateFormat("dd-MM-yyyy")
         val due_date: String = simpleDateFormat.format(Date())
         //Se crea el nuevo item
-        var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",list_items_uncompleted.size ,list_id!!,false,false,due_date,"")
-        //Se agrega a la BBDD y a la lista
-        database_item.insertItem(newItem)
+        var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",list_items_uncompleted.size ,list_id!!,false,false,due_date,"",0.0,0.0)
+        invokeLocationAction(newItem)
+        /*//Se agrega a la BBDD y a la lista
+        //database_item.insertItem(newItem)
         var add_item  = database_item.getLastItem()
+        Log.d("item long", add_item.toString())
         //Se introduce el item en la clase para enviarlo
         var sendItem = ApiItem(listOf(add_item))
         //Se envia a la Api
-        postItemApi(sendItem)
+        postItemApi(sendItem)*/
         //Se aumenta el conteo y se actualiza el recycler view
         itemsCreatedCounter++
         adapter2.notifyItemInserted(list_items_uncompleted.size )
@@ -536,5 +548,72 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         })
 
     }
+
+    private fun invokeLocationAction(item:ItemRoom) {
+        var cont = 0
+        when {
+            isPermissionsGranted() -> locationData.observe(this, Observer {
+                if(cont == 0){
+                    item.lat = it.latitude
+                    item.longi = it.longitude
+                    database_item.insertItem(item)
+                    //Se agrega a la BBDD y a la lista
+                    //database_item.insertItem(newItem)
+                    var add_item  = database_item.getLastItem()
+                    var api_item = ItemApi(add_item.id,add_item.name,add_item.position,add_item.list_id,add_item.starred,add_item.done,add_item.due_date,add_item.notes,add_item.lat,add_item.longi)
+                    //Se introduce el item en la clase para enviarlo
+                    var sendItem = ApiItem(listOf(api_item))
+                    //Se envia a la Api
+                    postItemApi(sendItem)
+                    Log.d("Holaaaaaaaaaaaaaaaaaaa","${it.latitude} , ${it.longitude}, speeeeeeeeeeeeeeeeeeeeed: ${it.speed}")
+                    Log.d("Holaaaaaaaaaaaaaaaaaaa",item.toString())
+                }
+                cont++
+            })
+            shouldShowRequestPermissionRationale() -> println("Ask Permission")
+
+            else -> ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_PERMISSION
+            )
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            LOCATION_PERMISSION -> {
+            }
+        }
+    }
+
+    private fun isPermissionsGranted() =
+        ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+
+    private fun shouldShowRequestPermissionRationale() =
+        ActivityCompat.shouldShowRequestPermissionRationale(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) && ActivityCompat.shouldShowRequestPermissionRationale(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+
 
 }

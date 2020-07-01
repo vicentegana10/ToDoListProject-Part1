@@ -20,6 +20,13 @@ import com.example.todolistproject.model.ItemRoomDao
 import com.example.todolistproject.networking.ApiService
 import com.example.todolistproject.networking.ItemApi
 import com.example.todolistproject.utils.TOKEN
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_app_menu.*
 import kotlinx.android.synthetic.main.activity_item_view.*
 import kotlinx.android.synthetic.main.activity_list.*
@@ -30,7 +37,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
+class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     companion object {
         var ITEM = "ITEM"
@@ -40,6 +47,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
     var item: ItemRoom?= null
     var edit: Boolean ?= null //Bool qu indica la prioridad
     lateinit var database_item: ItemRoomDao
+    private lateinit var mMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +94,10 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
             }
         }
 
+        val mapFragment = supportFragmentManager
+            .findFragmentById(R.id.map) as SupportMapFragment
+
+        mapFragment.getMapAsync(this)
 
         //Se edita la fecha de plazo al clickear el calendario
         imageViewCalendar.setOnClickListener(){
@@ -217,6 +229,18 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener {
             }
         })
 
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        val itemMarker =  LatLng(item!!.lat,item!!.longi)
+        var mark = mMap.addMarker(MarkerOptions().position(itemMarker).title(item!!.name))
+        mark.tag = item!!.id
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itemMarker,item!!.lat.toFloat()))
+    }
+
+    override fun onMarkerClick(p0: Marker?): Boolean {
+        TODO("Not yet implemented")
     }
 
 }
