@@ -14,7 +14,17 @@ import com.example.todolistproject.model.UserRoom
 import com.example.todolistproject.networking.ApiService
 import com.example.todolistproject.networking.UserApi
 import com.example.todolistproject.utils.TOKEN
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.parcel.Parcelize
+import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +34,13 @@ class MainActivity : AppCompatActivity() {
 
     var user: UserRoom ?= null
     var confirmResponse: Boolean = false
+
+    // FIREBASE GOOGLE
+    private var mGoogleSignInClient: GoogleSignInClient? = null
+    private val TAG = "MainActivity"
+    private var mAuth: FirebaseAuth? = null
+    //private var btnSignOut: Button? = null
+    private val RC_SIGN_IN = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +76,106 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        // FIREBASE GOOGLE
+        mAuth = FirebaseAuth.getInstance()
 
+        val gso = GoogleSignInOptions.Builder(
+            GoogleSignInOptions.DEFAULT_SIGN_IN
+        )
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        sign_in_button.setOnClickListener { signIn() }
+
+    }
+
+    // FIREBASE GOOGLE
+    private fun signIn() {
+        val signInIntent = mGoogleSignInClient!!.signInIntent
+        startActivityForResult(signInIntent, RC_SIGN_IN)
+    }
+
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task =
+                GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val acc = completedTask.getResult(
+                ApiException::class.java
+            )
+            //Toast.makeText(this@MainActivity, "Inicio de Sesión exitoso", Toast.LENGTH_SHORT).show()
+            FirebaseGoogleAuth(acc)
+
+        } catch (e: ApiException) {
+            Toast.makeText(this@MainActivity, "Sign In Failed", Toast.LENGTH_SHORT).show()
+            FirebaseGoogleAuth(null)
+        }
+    }
+
+    private fun FirebaseGoogleAuth(acct: GoogleSignInAccount?) { //check if the account is null
+        if (acct != null) {
+            val authCredential =
+                GoogleAuthProvider.getCredential(acct.idToken, null)
+            mAuth!!.signInWithCredential(authCredential).addOnCompleteListener(
+                this
+            ) { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this@MainActivity, "Inicio de Sesión exitoso", Toast.LENGTH_SHORT).show()
+                    val user = mAuth!!.currentUser
+                    updateUI(user)
+
+
+                } else {
+                    //Toast.makeText(this@MainActivity, "Error", Toast.LENGTH_SHORT).show()
+                    updateUI(null)
+                }
+            }
+        } else {
+            Toast.makeText(this@MainActivity, "acc failed", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun updateUI(fUser: FirebaseUser?) {
+        val account =
+            GoogleSignIn.getLastSignedInAccount(applicationContext)
+        if (account != null) {
+            val personName = account.displayName
+            val personGivenName = account.givenName
+            val personFamilyName = account.familyName
+            val personEmail = account.email
+            val personId = account.id
+            val personPhoto = account.photoUrl
+            Toast.makeText(this@MainActivity, personEmail, Toast.LENGTH_SHORT).show()
+
+            val intent = Intent(this@MainActivity, ToDoListsActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            if(confirmResponse){
+                intent.putExtra(USER, user)
+                //startActivity(intent)
+            }
+            else{
+                var userDefault:UserRoom = UserRoom("sinconexion@gmail.com","name","last name", "+56989022776", "", "password")
+                intent.putExtra(USER, userDefault)
+                //startActivity(intent)
+                Toast.makeText(applicationContext,"Usuario Default", Toast.LENGTH_LONG).show()
+            }
+
+            applicationContext.startActivity(intent)
+        }
     }
 
     //Al apretar ingresar, lleva a la vista de lista

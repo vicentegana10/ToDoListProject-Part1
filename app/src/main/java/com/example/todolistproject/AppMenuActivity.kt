@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.abs.clase11.utils.loadPhoto
 import com.example.todolistproject.model.UserRoom
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_app_menu.*
 import kotlinx.android.synthetic.main.activity_app_menu.topAppBarMenu
 import kotlinx.android.synthetic.main.activity_to_do_lists.*
@@ -31,8 +32,12 @@ class AppMenuActivity : AppCompatActivity() {
         textViewtextViewEmailInAppMenu.text=user.email
         imageViewAccountBox.loadPhoto(user.profile_photo)
 
-        ButtonLogOut.setOnClickListener(){
-            LogOut()
+        ButtonLogOut.setOnClickListener{
+            FirebaseAuth.getInstance().signOut()
+            Toast.makeText(this, "Sesión cerrada correctamente", Toast.LENGTH_SHORT).show()
+            val intent = Intent(applicationContext, MainActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            applicationContext.startActivity(intent)
         }
 
         topAppBarMenu.setNavigationOnClickListener{
@@ -56,10 +61,13 @@ class AppMenuActivity : AppCompatActivity() {
     }
 
     // una funcion para cerrar sesion
+    /*
     fun LogOut(){
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
+
+     */
 
     // funcion para ir a la View del perfil
     fun onMyProfileClicked(user1: UserRoom){
