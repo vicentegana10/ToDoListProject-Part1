@@ -236,7 +236,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener, OnMap
         val itemMarker =  LatLng(item!!.lat,item!!.longi)
         var mark = mMap.addMarker(MarkerOptions().position(itemMarker).title(item!!.name))
         mark.tag = item!!.id
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itemMarker,item!!.lat.toFloat()))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(itemMarker))
     }
 
     override fun onMarkerClick(p0: Marker?): Boolean {

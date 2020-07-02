@@ -1,6 +1,7 @@
 package com.example.todolistproject.networking
 
 import com.example.todolistproject.model.ApiItem
+import com.example.todolistproject.model.ItemApi
 import com.example.todolistproject.model.ItemRoom
 import retrofit2.Call
 import retrofit2.http.*
@@ -25,7 +26,7 @@ interface ItemApi {
     @GET("items/")
     fun getItemsApi(@Header("token") token: String?,
                    @Query("list_id") list_id: Int?
-    ): Call<List<ItemRoom>>
+    ): Call<List<ItemApi>>
 
     @DELETE("items/{item_id}")
     fun deleteItemApi(@Header("token") token: String?,

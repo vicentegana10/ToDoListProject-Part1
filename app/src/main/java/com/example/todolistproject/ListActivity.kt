@@ -413,6 +413,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                             database_item.updateIdItem(response.body()!![0].id,item.items[0].id)
                             //Se toma el ulitmo item ingresado y liego se inserta al la lista de los no completados
                             var add_item  = database_item.getLastItem()
+                            Log.d("recibidooooooo", add_item.toString())
                             list_items_uncompleted.add(add_item)
                             adapter2.notifyItemInserted(list_items_uncompleted.size)
                             Toast.makeText(this@ListActivity, "Datos Actualizados", Toast.LENGTH_SHORT).show()
@@ -489,14 +490,26 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
     fun getItemsApi(){
         val request = ApiService.buildService(ItemApi::class.java)
         val call = request.getItemsApi(TOKEN,list_id)
-        call.enqueue(object : Callback<List<ItemRoom>> {
-            override fun onResponse(call: Call<List<ItemRoom>>, response: Response<List<ItemRoom>>) {
-                Log.d("RESPONSE ITEM API",response.body().toString())
+        call.enqueue(object : Callback<List<com.example.todolistproject.model.ItemApi>> {
+            override fun onResponse(call: Call<List<com.example.todolistproject.model.ItemApi>>, response: Response<List<com.example.todolistproject.model.ItemApi>>) {
+
                 if (response.isSuccessful) {
                     if (response.body() != null) {
                         //Se consume de la Api y se agregan las listas a la BBDD
                         response.body()!!.forEach {
-                            database_item.insertItem(it)
+                            var add_item = ItemRoom(
+                                it.id,
+                                it.name,
+                                it.position,
+                                it.list_id,
+                                it.starred,
+                                it.done,
+                                it.due_date,
+                                it.notes,
+                                it.lat,
+                                it.long
+                            )
+                            database_item.insertItem(add_item)
                         }
 
                         var items_uncompleted = database_item.getItems(list_id!!,false)
@@ -524,7 +537,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                 }
             }
 
-            override fun onFailure(call: Call<List<ItemRoom>>, t: Throwable) {
+            override fun onFailure(call: Call<List<com.example.todolistproject.model.ItemApi>>, t: Throwable) {
                 //Se consumen los items desde la BBDD----------------------------------------
                 var items_uncompleted = database_item.getItems(list_id!!,false)
                 if(items_uncompleted!= null){
@@ -565,8 +578,6 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
                     var sendItem = ApiItem(listOf(api_item))
                     //Se envia a la Api
                     postItemApi(sendItem)
-                    Log.d("Holaaaaaaaaaaaaaaaaaaa","${it.latitude} , ${it.longitude}, speeeeeeeeeeeeeeeeeeeeed: ${it.speed}")
-                    Log.d("Holaaaaaaaaaaaaaaaaaaa",item.toString())
                 }
                 cont++
             })
