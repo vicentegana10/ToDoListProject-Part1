@@ -3,6 +3,8 @@ package com.example.todolistproject
 // no son necesarios y que muestran un Toast.
 // Su función para esta entrega es poder mostrar los items de cada lista y que al volver no se haya perdido el orden de las listas.
 
+import Dialogs.DialogShareList
+import Dialogs.dialogShareListListener
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -11,6 +13,8 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -47,9 +51,10 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.List
 import androidx.lifecycle.Observer
+import com.example.todolistproject.networking.SharedListsAPI
 
 
-class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
+class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener, dialogShareListListener{
 
     companion object {
         var LIST = "LIST"
@@ -74,6 +79,23 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
     private lateinit var locationData: LocationUtil
 
+    lateinit var mainHandler: Handler
+
+    //Funcion que recarga la lista de items y revisa si hay actualizaciones en la api
+    private val updateTextTask = object : Runnable {
+        override fun run() {
+            list_items_uncompleted.clear()
+            list_items_completed.clear()
+            adapter2.notifyDataSetChanged()
+            adapter2.notifyDataSetChanged()
+            getItemsApi()
+            mainHandler.postDelayed(this, 10000)
+        }
+    }
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
@@ -94,7 +116,8 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         current_list = list
         //------------------------------------------------------------
         //Se obtienen todos los items de la Api y luego se insertan el la bbdd
-        getItemsApi()
+        mainHandler = Handler(Looper.getMainLooper())
+        //getItemsApi()
         //-------------------------------------------------------------------------------
         //Recycler View UnCompletedItems----------------------------------
         linearLayoutManager2 = LinearLayoutManager(this)
@@ -110,6 +133,9 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         adapter3 = UncompleteItemsAdapter(list_items_completed,this)
         recyclerViewCompleted.adapter = adapter3
         //--------------------------------------------------------------------------
+
+        //Se piden los permisos de localizacion
+        locationPermission()
 
         //Se devulve a la vista anterior
         topAppBarList.setNavigationOnClickListener{
@@ -132,6 +158,10 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         //Expande el recycler view de los completados
         buttonShowCompleted.setOnClickListener(){
             expandRecyclerView()
+        }
+        //Si la lista es compartida, no se muestra el boton compartir
+        if(list.shared == true){
+            buttonShare.visibility = View.GONE
         }
 
         //Drag and drop items no completados
@@ -273,22 +303,14 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         //Se crea el nuevo item
         var newItem = ItemRoom( null,"Item  $itemsCreatedCounter",list_items_uncompleted.size ,list_id!!,false,false,due_date,"",0.0,0.0)
         invokeLocationAction(newItem)
-        /*//Se agrega a la BBDD y a la lista
-        //database_item.insertItem(newItem)
-        var add_item  = database_item.getLastItem()
-        Log.d("item long", add_item.toString())
-        //Se introduce el item en la clase para enviarlo
-        var sendItem = ApiItem(listOf(add_item))
-        //Se envia a la Api
-        postItemApi(sendItem)*/
-        //Se aumenta el conteo y se actualiza el recycler view
         itemsCreatedCounter++
         adapter2.notifyItemInserted(list_items_uncompleted.size )
     }
 
 
     fun onShareListButtonClick(view: View){
-        Toast.makeText(view.context,"No implementado aun",Toast.LENGTH_LONG).show()
+        val dialogShare = DialogShareList()
+        dialogShare.show(supportFragmentManager, "dialogProduct")
     } // Tiene que compartir lista
 
     //Devuelve la lista actualizada con todos los items dentro, se vuelve a la vista anterior
@@ -396,8 +418,14 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
 
     override fun onResume() {
         super.onResume()
+        mainHandler.post(updateTextTask)
         adapter2.refereshListItems(list_items_uncompleted)
         adapter3.refereshListItems(list_items_completed)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mainHandler.removeCallbacks(updateTextTask)
     }
 
     //Funcion que hace el post del item en la Api
@@ -594,6 +622,25 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
         }
     }
 
+    private fun locationPermission() {
+        when {
+            isPermissionsGranted() -> locationData.observe(this, Observer {
+
+            })
+            shouldShowRequestPermissionRationale() -> println("Ask Permission")
+
+            else -> ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
+                LOCATION_PERMISSION
+            )
+        }
+    }
+
+    //Permisos de localizacion -----------------------------------------------
     @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -625,6 +672,39 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener {
             this,
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
+    //--------------------------------------------------------------------------
+
+    //Se recibe el mail que viene desde el dialog y luego se comparte la lista
+    override fun emailShared(email: String) {
+        var shareList = ShareList(list_id!!,email)
+        postSharedList(shareList)
+    }
+
+    //Funcion que hace el post para compartir la lista
+    fun postSharedList(sharedList: ShareList){
+        val request = ApiService.buildService(SharedListsAPI::class.java)
+        val call = request.postSharedList(TOKEN,sharedList)
+        call.enqueue(object : Callback<ShareList> {
+            override fun onResponse(call: Call<ShareList>, response: Response<ShareList>) {
+                Log.d("RESPONSE",response.body()!!.toString())
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(response.message() == "Created"){
+                            Toast.makeText(this@ListActivity, "Lista Compartida a " + sharedList.user_email, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                else{
+                    Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ShareList>, t: Throwable) {
+                Toast.makeText(this@ListActivity, "No hay conexion a Internet, no se puede compartir", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+    }
 
 
 }

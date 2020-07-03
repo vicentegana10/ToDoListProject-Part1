@@ -46,15 +46,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/buttonCompleteItem"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#B4B3B8"
-            android:clickable="false"
-            android:text="Estado" />
     </LinearLayout>
 
     <ScrollView

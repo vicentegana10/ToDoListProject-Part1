@@ -6,10 +6,7 @@ package com.example.todolistproject
 // inmediatamente.   Tambien se puede ingresar a la view de cada lista apretando sobre una en especifico y al volver no se habrá
 // olvidado el orden.    Por ultimo para cerrar sesion hay un boton arriba al lado del nombre de usuario para volver al Login.
 
-import Dialogs.DialogList
-import Dialogs.DialogList2
-import Dialogs.dialogList2Listener
-import Dialogs.dialogListListener
+import Dialogs.*
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -18,6 +15,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
 import android.os.Parcelable
 import android.util.Log
 import android.view.View
@@ -35,10 +33,8 @@ import com.example.todolistproject.adapters.OnButtonClickListener
 import com.example.todolistproject.adapters.OnItemClickListener
 import com.example.todolistproject.classes.Item
 import com.example.todolistproject.model.*
-import com.example.todolistproject.networking.ApiService
+import com.example.todolistproject.networking.*
 import com.example.todolistproject.networking.ItemApi
-import com.example.todolistproject.networking.ListApi
-import com.example.todolistproject.networking.UserApi
 import com.example.todolistproject.utils.TOKEN
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.parcel.Parcelize
@@ -65,6 +61,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
     lateinit var database_list: ListRoomDao
     lateinit var database_item: ItemRoomDao
 
+    lateinit var mainHandler: Handler
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_to_do_lists)
@@ -90,10 +88,12 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
             database.insert(userToInsert)
         }
 
+        //Se obtienen las listas compartidas de la api
+        getSharedListsApi()
+
         //Se obtienen en la listas de la Api
         //En caso de no tener internet, se cargan las listas que estaban en la BBDD
         getListsApi()
-
 
         // Aca una variable que se borra, es para ir viendo la bd en Debug
         val usersInRoomDao  = database.getAllUsers()
@@ -120,10 +120,6 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                 else -> false
             }
         }
-        //Nos envia al menu
-        //imageViewLogoUsername.setOnClickListener(){
-        //    onUsernameClicked(user!!)
-        //}
 
         //Se implemetó el drag and drop, cambia la listas de lugar, y se eleminan hacia el lado
         val itemTouchHelperCallBack = object : ItemTouchHelper.Callback()  {
@@ -232,7 +228,7 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
     //Se añade un lista a userToDoList
     override fun addList(nameList: String){
-        var list = ListRoom(null,nameList,listsCreatedCounter)
+        var list = ListRoom(null,nameList,listsCreatedCounter,null)
         AsyncTask.execute{
             database_list.insertList(list)
             var add_list = database_list.getLastList()
@@ -423,6 +419,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                             database_list.insertList(it)
                             recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
                         }
+
+
                         //Si hay listas en la BBDD, se agregan a userToDoList
                         if(database_list.getAllList() != null){
                             if(userToDoList != null){
@@ -460,6 +458,69 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
             }
         })
 
+    }
+
+    //Se obtienen todos los id de las listas compartidas de la api
+    fun getSharedListsApi(){
+        val request = ApiService.buildService(SharedListsAPI::class.java)
+        val call = request.getSharedLists(TOKEN)
+        call.enqueue(object : Callback<List<SharedListId>> {
+            override fun onResponse(call: Call<List<SharedListId>>, response: Response<List<SharedListId>>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+
+                        response.body()!!.forEach {
+                            getSharedList(it.list_id)
+                        }
+                    }
+                }
+                else{
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<SharedListId>>, t: Throwable) {
+            }
+        })
+
+    }
+    //Se obtiene la lista compartida de la api segun su id
+    fun getSharedList(list_id:Int){
+        val request = ApiService.buildService(ListApi::class.java)
+        val call = request.getListApi(TOKEN,list_id)
+        call.enqueue(object : Callback<ListRoom> {
+            override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        response.body()!!.position = userToDoList.size
+                        response.body()!!.shared = true
+                        Log.d("Shareeed ACT",response.body()!!.toString())
+                        database_list.insertList(response.body()!!)
+                        recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
+
+                        //Si hay listas en la BBDD, se agregan a userToDoList
+                        /*if(database_list.getSharedListOrdered(true) == null){
+                            if(userToDoList != null){
+                                var countLists = 0
+                                database_list.getSharedListOrdered(true).forEach{
+                                    userToDoList.add(it)
+                                    countLists++
+                                }
+
+                                listsCreatedCounter = countLists
+                            }
+                        }*/
+                    }
+                }
+                else{
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ListRoom>, t: Throwable) {
+
+            }
+        })
     }
 
 }

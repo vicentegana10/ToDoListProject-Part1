@@ -7,6 +7,7 @@ import android.os.Parcelable
 import androidx.room.*
 import com.example.todolistproject.model.ListRoom.Companion.ID
 import com.example.todolistproject.model.ListRoom.Companion.POSITION
+import com.example.todolistproject.model.ListRoom.Companion.SHARED
 import kotlinx.android.parcel.Parcelize
 import kotlin.collections.List
 
@@ -30,6 +31,8 @@ interface ListRoomDao {
     fun getAllList(): List<ListRoom>
     @Query("SELECT * FROM ${TABLE_NAME} ORDER BY ${POSITION} ASC")
     fun getAllListOrdered(): List<ListRoom>
+    @Query("SELECT * FROM ${TABLE_NAME} WHERE ${SHARED} = :shared ORDER BY ${POSITION} ASC")
+    fun getSharedListOrdered(shared: Boolean): List<ListRoom>
 }
 
 @Parcelize
@@ -40,12 +43,19 @@ data class ListRoom(
     @ColumnInfo(name = NAME)
     var name: String,
     @ColumnInfo(name = POSITION)
-    var position: Int
+    var position: Int,
+    @ColumnInfo(name = SHARED)
+    var shared: Boolean?
 ): Parcelable {
     companion object {
         const val TABLE_NAME = "list"
         const val ID = "id"
         const val NAME = "name"
         const val POSITION = "position"
+        const val SHARED = "shared"
     }
 }
+
+data class ShareList(var list_id:Int,var user_email: String)
+
+data class SharedListId(var list_id: Int)

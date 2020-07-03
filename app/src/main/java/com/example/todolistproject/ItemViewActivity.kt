@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener, OnMapReadyCallback {
 
     companion object {
         var ITEM = "ITEM"
@@ -68,12 +68,6 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener, OnMap
         if (item!!.notes != ""){
             textView5.setText(item!!.notes)
         }
-
-        //Se muestra en un text view si el item está completado o no
-        if(item!!.done){
-            buttonCompleteItem.text="Completado"
-        }
-        else{buttonCompleteItem.text="En progreso"}
 
         if(edit!!){
             imageViewStar.setImageResource(R.drawable.ic_star_yellow_24dp)
@@ -159,18 +153,6 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener, OnMap
         edit = !edit!!
     }
 
-    fun EditCompleted(){
-        if (item?.done == true){
-            item?.done = false
-            buttonCompleteItem.text="Completar"
-            Toast.makeText(applicationContext,"Ahora el item esta en progreso", Toast.LENGTH_LONG).show()
-        }
-        else{
-            item?.done = true
-            buttonCompleteItem.text="En progreso"
-            Toast.makeText(applicationContext,"Ahora el item esta completado", Toast.LENGTH_LONG).show()
-        }
-    }
     //Se guarda la nota editada
     fun SaveNote(){
         item?.notes  = textView5.text.toString()
@@ -236,11 +218,7 @@ class ItemViewActivity : AppCompatActivity(),dialogChangeItemNameListener, OnMap
         val itemMarker =  LatLng(item!!.lat,item!!.longi)
         var mark = mMap.addMarker(MarkerOptions().position(itemMarker).title(item!!.name))
         mark.tag = item!!.id
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(itemMarker))
-    }
-
-    override fun onMarkerClick(p0: Marker?): Boolean {
-        TODO("Not yet implemented")
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(itemMarker,20f))
     }
 
 }

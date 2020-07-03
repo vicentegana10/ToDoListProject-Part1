@@ -1,5 +1,6 @@
 package com.example.todolistproject.adapters
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,6 +55,10 @@ class ListsAdapter(private var userlist: ArrayList<ListRoom>,val itemClickListen
         fun bindContact(list: ListRoom,clickListener: OnItemClickListener,clickListener2: OnButtonClickListener){
             this.list = list
             view.textViewList.text = list.name
+
+            if(list.shared == true){
+                view.rowList.setBackgroundColor(Color.GREEN)
+            }
 
             itemView.setOnClickListener {
                 clickListener.onItemClicked(list)
