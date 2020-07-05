@@ -686,7 +686,7 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener, dialogS
         val call = request.postSharedList(TOKEN,sharedList)
         call.enqueue(object : Callback<ShareList> {
             override fun onResponse(call: Call<ShareList>, response: Response<ShareList>) {
-                Log.d("RESPONSE",response.body()!!.toString())
+                //Log.d("RESPONSE",response.body()!!.toString())
                 if (response.isSuccessful) {
                     if (response.body() != null) {
                         if(response.message() == "Created"){
@@ -695,7 +695,8 @@ class ListActivity : AppCompatActivity(), OnUnCompleteItemClickListener, dialogS
                     }
                 }
                 else{
-                    Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ListActivity, "No ha sido posible compartir lista con: "+ sharedList.user_email, Toast.LENGTH_LONG).show()
+                    //Toast.makeText(this@ListActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
