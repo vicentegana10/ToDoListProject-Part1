@@ -59,6 +59,9 @@ class ListsAdapter(private var userlist: ArrayList<ListRoom>,val itemClickListen
             if(list.shared == true){
                 view.rowList.setBackgroundColor(Color.GREEN)
             }
+            else{
+                view.rowList.setBackgroundColor(Color.BLUE)
+            }
 
             itemView.setOnClickListener {
                 clickListener.onItemClicked(list)

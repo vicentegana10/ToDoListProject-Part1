@@ -13,10 +13,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.os.AsyncTask
-import android.os.Bundle
-import android.os.Handler
-import android.os.Parcelable
+import android.os.*
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -63,6 +60,27 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
 
     lateinit var mainHandler: Handler
 
+    var cont = 0
+
+    //Funcion que recarga las listas compartidas y revisa si hay actualizaciones en la api
+    private val updateTextTask = object : Runnable {
+        override fun run() {
+            uploadSharedList()
+            recyclerViewLists.adapter?.notifyDataSetChanged()
+            mainHandler.postDelayed(this, 10000)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mainHandler.post(updateTextTask)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mainHandler.removeCallbacks(updateTextTask)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_to_do_lists)
@@ -89,7 +107,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
         }
 
         //Se obtienen las listas compartidas de la api
-        getSharedListsApi()
+        //getSharedListsApi()
+        mainHandler = Handler(Looper.getMainLooper())
 
         //Se obtienen en la listas de la Api
         //En caso de no tener internet, se cargan las listas que estaban en la BBDD
@@ -420,6 +439,8 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
                             recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
                         }
 
+                        getSharedListsApi()
+
 
                         //Si hay listas en la BBDD, se agregan a userToDoList
                         if(database_list.getAllList() != null){
@@ -492,24 +513,113 @@ class ToDoListsActivity : AppCompatActivity(), OnItemClickListener,dialogListLis
             override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
                 if (response.isSuccessful) {
                     if (response.body() != null) {
-                        response.body()!!.position = userToDoList.size
+                        response.body()!!.position = database_list.getAllList().size
                         response.body()!!.shared = true
-                        Log.d("Shareeed ACT",response.body()!!.toString())
                         database_list.insertList(response.body()!!)
                         recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
 
-                        //Si hay listas en la BBDD, se agregan a userToDoList
-                        /*if(database_list.getSharedListOrdered(true) == null){
-                            if(userToDoList != null){
-                                var countLists = 0
-                                database_list.getSharedListOrdered(true).forEach{
-                                    userToDoList.add(it)
-                                    countLists++
-                                }
+                    }
+                }
+                else{
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
 
-                                listsCreatedCounter = countLists
+            override fun onFailure(call: Call<ListRoom>, t: Throwable) {
+
+            }
+        })
+    }
+
+    //Se hace update a las listas
+    fun uploadSharedList(){
+        val request = ApiService.buildService(SharedListsAPI::class.java)
+        val call = request.getSharedLists(TOKEN)
+        call.enqueue(object : Callback<List<SharedListId>> {
+            override fun onResponse(call: Call<List<SharedListId>>, response: Response<List<SharedListId>>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        if(database_list.getSharedListOrdered(true).size > response.body()!!.size ) {
+                            Log.d("DELETE LIST",response.body()!!.toString())
+                            database_list.getSharedListOrdered(true).forEach {
+                                var l = SharedListId(it.id!!)
+                                if(response.body()!!.indexOf(l) == -1){
+                                    var delList = database_list.getList(l.list_id)
+                                    var index = userToDoList.indexOf(delList)
+                                    userToDoList.remove(delList)
+                                    recyclerViewLists.adapter?.notifyDataSetChanged()
+                                    database_list.deleteList(delList)
+                                    Log.d("DELETE LIST",database_list.getSharedListOrdered(true).toString())
+                                    Log.d("DELETE LIST",userToDoList.toString())
+                                }
                             }
-                        }*/
+                        }
+                        else if(database_list.getSharedListOrdered(true).size < response.body()!!.size ){
+                            for(i in database_list.getSharedListOrdered(true).size until response.body()!!.size){
+                                insertSharedList(response.body()!![i].list_id)
+                            }
+                        }
+                        else if(database_list.getSharedListOrdered(true).size == response.body()!!.size ){
+                            response.body()!!.forEach {
+                                getList(it.list_id)
+                            }
+                        }
+                    }
+                }
+                else{
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<SharedListId>>, t: Throwable) {
+            }
+        })
+    }
+    //Se
+    fun getList(list_id: Int){
+        val request = ApiService.buildService(ListApi::class.java)
+        val call = request.getListApi(TOKEN,list_id)
+        call.enqueue(object : Callback<ListRoom> {
+            override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        Log.d("GET LIST", response.body()!!.toString())
+                        var list = database_list.getList(response.body()!!.id!!)
+                        var index = userToDoList.indexOf(list)
+                        if(index != -1){
+                            list.name = response.body()!!.name
+                            database_list.insertList(list)
+                            userToDoList[index] = list
+                            recyclerViewLists.adapter?.notifyDataSetChanged()
+                            Log.d("GET LIST", userToDoList[userToDoList.indexOf(list)].toString())
+                        }
+                    }
+                }
+                else{
+                    Toast.makeText(this@ToDoListsActivity, "${response.errorBody()}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ListRoom>, t: Throwable) {
+
+            }
+        })
+    }
+    //Funcion que inserta una lista compartida
+    fun insertSharedList(list_id: Int){
+        val request = ApiService.buildService(ListApi::class.java)
+        val call = request.getListApi(TOKEN,list_id)
+        call.enqueue(object : Callback<ListRoom> {
+            override fun onResponse(call: Call<ListRoom>, response: Response<ListRoom>) {
+                if (response.isSuccessful) {
+                    if (response.body() != null) {
+                        Log.d("GET LIST", response.body()!!.toString())
+                        var list = response.body()!!
+                        list.position = userToDoList.size
+                        list.shared = true
+                        database_list.insertList(list)
+                        userToDoList.add(list)
+                        recyclerViewLists.adapter?.notifyItemInserted(userToDoList.size)
                     }
                 }
                 else{
